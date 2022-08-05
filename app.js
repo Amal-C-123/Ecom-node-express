@@ -3,7 +3,9 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var session = require("express-session");
 
+var db = require("./config/connection");
 var userRouter = require("./routes/users");
 var adminRouter = require("./routes/admin");
 var hbs = require("express-handlebars");
@@ -22,14 +24,44 @@ app.engine(
   })
 );
 
+db.connect((err) => {
+  if (err) console.log("connection error" + err);
+  else console.log("database connected");
+});
+
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+// app.use(express.static(path.join(__dirname, "uploads")));
+
+app.use(
+  session({
+    secret: "key",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 3600000 },
+  })
+);
+
+app.use((req, res, next) => {
+  if (!req.user) {
+    res.header("cache-control", "private,no-cache,no-store,must revalidate");
+    res.header("Express", "-2");
+  }
+  next();
+});
+app.use((req, res, next) => {
+  if (!req.admin) {
+    res.header("cache-control", "private,no-cache,no-store,must revalidate");
+    res.header("Express", "-2");
+  }
+  next();
+});
 
 app.use("/", userRouter);
-// app.use("/admin", adminRouter);
+app.use("/admin", adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

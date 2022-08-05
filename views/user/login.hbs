@@ -1,0 +1,111 @@
+<div class="row m-0">
+  <div class="col-md-6 m-auto">
+    <div class="containor mt-3 pl-5">
+      <h2 class="text-center">Login</h2>
+
+      <form action="/login" method="POST" onsubmit="return(validateLogin())">
+      <p id="submit-error" style="color: red;"></p>
+        {{#if loginErr}}
+          <p class="error text-center" style="color: red;">Invalid username or
+            password</p>
+        {{/if}}
+        {{#if blocked}}
+          <p class="error text-center" style="color: red;">Your account is
+            blocked</p>
+        {{/if}}
+        <div class="form-group">
+          <label>User name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="email"
+            name="Email"
+            placeholder="Enter username"
+            onchange="validateEmail()"
+          />
+          <p id="email-error" style="color: red;"></p>
+        </div>
+        <div class="form-group">  
+          <label>Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="Password"
+            placeholder="Password"
+          />
+          <p id="password-error" style="color: red;"></p>
+        </div>
+
+        <a
+          href="/signup"
+          class="sign sign-info mt-5"
+          style="width: fit-content; text-decoration: none;"
+        >Create new account</a>
+        <br />
+        <a
+          href="/otp-login"
+          class="sign sign-info mt-5"
+          style="width: fit-content; text-decoration: none;"
+        >Login using phone number</a>
+
+        <div class="mx-auto m-3" style=" width: fit-content;">
+
+          <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  var emailError = document.getElementById('email-error'); 
+  var passwordError = document.getElementById('password-error');
+    var submitError = document.getElementById('submit-error');
+
+  function validateEmail(){
+     var email = document.getElementById('email').value;
+
+      if (email.length == 0) {
+        emailError.innerHTML = "Email is required";
+        return false;
+      }
+
+   if (!email.match(/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/)) {
+        emailError.innerHTML = "Email is invalid";
+        return false;
+      }
+
+      emailError.innerHTML = ""
+      return true
+    }
+
+  function validatePassword(){
+    var password = document.getElementById('password').value; 
+
+    if (password.length == 0) {
+        passwordError.innerHTML = "Password is required";
+        return false;
+
+      }
+
+     if (password.length < 3) {
+        passwordError.innerHTML = "Password must be atleast 3 characters ";
+        return false;
+      }
+        passwordError.innerHTML = ''
+        return true      
+    }  
+  
+
+
+  function validateLogin(){
+
+      if (!validateEmail() ||  !validatePassword()) {
+        submitError.innerHTML = 'Please fill the form properly';
+        return false;
+      }
+
+  }
+</script>
