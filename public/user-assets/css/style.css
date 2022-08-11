@@ -74,7 +74,7 @@ a img {
 }
 
 p {
-  margin-bottom: 30px;
+  margin-bottom: 4px;
 }
 p:last-child {
   margin-bottom: 0;
@@ -235,7 +235,7 @@ table p {
 .container,
 .container-fluid {
   padding-bottom: 80px;
-  padding-top: 110px;
+  padding-top: 50px;
 }
 @media only screen and (max-width: 1199px) {
   .container,
@@ -7477,13 +7477,16 @@ table p {
   top: 2px;
   margin-right: 11px;
 }
+.account-area{
+  padding: 15px;
+}
 
 .login-form-content {
   max-width: 570px;
   margin: 0 auto;
 }
 .login-form-content .form-group {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 .login-form-content .form-group label {
   color: #333;
@@ -9179,7 +9182,7 @@ table p {
 }
 
 .account-area .container {
-  padding-top: 95px;
+  padding-top: 0px;
   padding-bottom: 100px;
 }
 @media only screen and (max-width: 1199px) {
@@ -9192,7 +9195,7 @@ table p {
   border-bottom: 1px solid #e8e8e8;
   max-width: 570px;
   margin: 0 auto 40px;
-  padding-bottom: 14px;
+  padding-bottom: 0px;
 }
 .account-area .section-title .title {
   font-size: 44px;

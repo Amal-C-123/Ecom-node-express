@@ -4,6 +4,7 @@ require("dotenv").config();
 var router = express.Router();
 const userHelpers = require("../helpers/user-helpers");
 var productHelpers = require("../helpers/product-management");
+const cartHelpers = require("../helpers/cart-helpers");
 
 const client = require("twilio")(
   process.env.ACCOUNT_SID,
@@ -15,31 +16,32 @@ const client = require("twilio")(
 
 let User_number = "";
 
-const verifyAuth = (req, res, next) => {
+const verifyLogin = (req, res, next) => {
   if (req.session.loggedIn) {
-    res.redirect("/");
-  } else {
     next();
+  } else {
+    res.redirect("/login");
   }
 };
-/* GET users listing. */
-router.get("/", function (req, res, next) {
-  let user = req.session.user;
-  let userSession = req.session;
 
-  //   productHelpers.getAlluser().then((products) => {
-  //     res.render("index", { products, user });
-  //  });
-  userHelpers.isExist(userSession);
+/* GET users listing. */
+router.get("/", async function (req, res, next) {
+  let user = req.session.user;
+  // let userSession = req.session;
+  // console.log(userSession);
+  // userHelpers.isExist(userSession);
+  let cartCount = null;
+  if (req.session.user) {
+    cartCount = await cartHelpers.getCartCount(req.session.user._id);
+  }
+
   productHelpers.getAllProducts().then((products) => {
-    console.log(products);
-    res.render("index", { userHead: true, user, products });
+    res.render("index", { userHead: true, user, products, cartCount });
   });
 });
 
-router.get("/login", verifyAuth, (req, res) => {
+router.get("/login", (req, res) => {
   let blocked = req.session.blockedUser;
-  console.log(blocked);
   res.render("user/login", {
     userHead: true,
     loginErr: req.session.loginErr,
@@ -67,16 +69,13 @@ router.post("/login", (req, res) => {
 
 //view products in users home page
 router.get("/view-product/:id", function (req, res) {
-  productHelpers.getProductData(req.params.id)
-    .then((product) => {
-     res.render("user/product-details", { product, userHead: true });
-  })
-        
-}); 
+  productHelpers.getProductData(req.params.id).then((product) => {
+    res.render("user/product-details", { product, userHead: true });
+  });
+});
 
 router.get("/user-dashboard", (req, res) => {
   let user = req.session.user;
-  console.log(user);
   if (req.session.loggedIn) {
     res.render("user/user-dashboard", { user, userHead: true });
   } else {
@@ -90,7 +89,7 @@ router.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-router.get("/signup", verifyAuth, (req, res) => {
+router.get("/signup", (req, res) => {
   res.render("user/signup", { userHead: true, signErr: req.session.signErr });
   req.session.signErr = false;
 });
@@ -109,19 +108,30 @@ router.post("/signup", (req, res) => {
 });
 
 //otp section
-router.get("/otp-login", verifyAuth, (req, res) => {
+router.get("/otp-login", (req, res) => {
   res.render("user/otp-login");
   req.session.loginErr = false;
 });
 
 router.post("/otp-verification", (req, res) => {
-  const { number } = req.body;
-  User_number = number;
-  client.verify.services(process.env.SERVICE_SID).verifications.create({
-    to: `+91${number}`,
-    channel: "sms",
+  userHelpers.numberExist(req.body.number).then((response) => {
+    if (response.userExist == false) {
+      res.render("user/otp-login", { userNotExist: true });
+    } else if (response.userBlock == true) {
+      res.render("user/otp-login", { userBlock: true });
+    } else {
+      req.session.user = response;
+      // req.session.user = resp.Email;
+      const { number } = req.body;
+      console.log(number);
+      User_number = number;
+      client.verify.services(process.env.SERVICE_SID).verifications.create({
+        to: `+91${number}`,
+        channel: "sms",
+      });
+      res.render("user/otp-verify", { user: response.user });
+    }
   });
-  res.render("user/otp-verify");
 });
 
 router.post("/otp-matching", function (req, res) {
@@ -135,15 +145,58 @@ router.post("/otp-matching", function (req, res) {
       code: otp,
     })
     .then((resp) => {
-      console.log(resp);
-      if (resp.valid == true) {
+      if (resp.valid == false) {
+        req.session.otp = true;
+        let otpvalidation = req.session.otp;
+        res.render("user/otp-verify", { otpvalidation });
+      } else if (resp.valid == true) {
+        req.session.loggedIn = true;
         res.redirect("/");
-      } else {
-        res.render("user/otp-verify");
       }
     });
-
-  //res.redirect("/");
 });
+
+//cart section
+router.get("/cart", verifyLogin, async (req, res) => {
+  let user = req.session.user;
+  let cartCount = await cartHelpers.getCartCount(req.session.user._id);
+  let products = await cartHelpers.getCartProducts(req.session.user._id);
+  let total = await cartHelpers.getTotalAmount(req.session.user._id);
+  res.render("user/cart", { userHead: true, products, cartCount, total, user });
+});
+
+router.get("/add-to-cart/:id", verifyLogin, (req, res) => {
+  cartHelpers.addToCart(req.params.id, req.session.user._id).then((data) => {
+    res.json({ status: true });
+  });
+});
+
+router.post("/change-product-quantity", verifyLogin, (req, res, next) => {
+  cartHelpers.changeProductQuantity(req.body).then(async (response) => {
+    let total = await cartHelpers.getTotalAmount(req.session.user._id);
+    if (total > 0) {
+      response.total = total;
+    }
+    res.json(response);
+  });
+});
+
+router.get("/checkout", verifyLogin, async (req, res) => {
+  let user = req.session.user;
+  let total= await cartHelpers.getTotalAmount(req.session.user._id)
+  res.render("user/checkout", { userHead:true, user, total });
+});
+
+router.post("/checkout-form",verifyLogin, async (req, res) => {
+  let user = req.session.user;
+  let products= await cartHelpers.getCartProductList(req.body.userId)
+  let totalPrice = await cartHelpers.getTotalAmount(req.body.userId);
+  cartHelpers.placeOrder(req.body,products,totalPrice).then((response) => {
+    res.json({status:true})
+  })
+ 
+  //res.render("user/checkout", { user,total });
+   
+})
 
 module.exports = router;

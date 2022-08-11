@@ -5,12 +5,12 @@
             <h2 class="text-center fs-5 fw-bold mt-3">LOGIN WITH PHONE NUMBER</h2>
             
             <form action="/otp-verification" method="POST" class="text-center mt-4" >
-            {{#if loginerr}}
-                <p class="error text-center" style="color: red;">Invalid number</p>
+            {{#if userBlock}}
+                <p class="error text-center" style="color: red;">The number is blocked</p>
             {{/if}}
 
-            {{#if invalidph}}
-                <p class="error text-center" style="color: red;">Invalid number</p>
+            {{#if userNotExist}}
+                <p class="error text-center" style="color: red;">User doesnot exist</p>
             {{/if}}
                 <div class="form-group text-center">
                     <label class="mb-3" style="color: #1e1d1d;">Enter your phone number</label>

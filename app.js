@@ -29,7 +29,7 @@ db.connect((err) => {
   else console.log("database connected");
 });
 
-app.use(logger("dev"));
+// app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -40,7 +40,7 @@ app.use(
   session({
     secret: "key",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { maxAge: 3600000 },
   })
 );

@@ -171,7 +171,7 @@
               <div class="inner-content">
                 <div class="product-thumb">
                   <a href="/view-product/{{this._id}}">
-                    <img src="/images/{{this.Image.[0]}}" width="270" height="274" alt="Image-HasTech">
+                    <img src="/images/{{this.Image.[0]}}" width="270" height="274" style="width: 270px; height:274px" alt="Image-HasTech">
                   </a>
                   {{!-- <div class="product-flag">
                     <ul>
@@ -180,11 +180,12 @@
                   </div> --}}
                   <div class="product-action">
                     <a class="btn-product-wishlist" href="shop-wishlist.html"><i class="fa fa-heart"></i></a>
-                    <a class="btn-product-cart" href="shop-cart.html"><i class="fa fa-shopping-cart"></i></a>
+                    {{!-- <a class="btn-product-cart" href="/add-to-cart/{{this._id}}"><i class="fa fa-shopping-cart"></i></a> --}}
+                    <button class="btn-product-cart" onclick="addToCart('{{this._id}}')"><i class="fa fa-shopping-cart"></i></button>
                     {{!-- <button type="button" class="btn-product-quick-view-open">
                       <i class="fa fa-arrows"></i>
                     </button> --}}
-                    <a class="btn-product-compare" href="shop-compare.html"><i class="fa fa-random"></i></a>
+                    {{!-- <a class="btn-product-compare" href="shop-compare.html"><i class="fa fa-random"></i></a> --}}
                   </div>
                   <a class="banner-link-overlay" href="shop.html"></a>
                 </div>

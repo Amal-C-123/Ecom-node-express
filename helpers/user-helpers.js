@@ -39,9 +39,7 @@ module.exports = {
         .collection(collection.USER_COLLECTION)
         .findOne({ Email: userData.Email });
 
-
       if (user) {
-        
         if (user.block == true) {
           resolve({ userBlock: true });
         }
@@ -63,19 +61,38 @@ module.exports = {
     });
   },
 
-  isExist: (isUser) => {
-    var user = { ...isUser.user };
-    async function nameGetter(user) {
-      let email = await db
+  // isExist: (isUser) => {
+  //   var user = { ...isUser.user };
+  //   async function nameGetter(user) {
+  //     let email = await db
+  //       .get()
+  //       .collection(collection.USER_COLLECTION)
+  //       .findOne({ Email: user.Email });
+  //     let userEmail = { ...email };
+  //     if (userEmail.Email !== user.Email) {
+  //       isUser.destroy();
+  //     }
+  //   }
+  //   nameGetter(user);
+  // },
+
+  numberExist: (number) => {
+    return new Promise(async (resolve, reject) => {
+      let user = await db
         .get()
         .collection(collection.USER_COLLECTION)
-        .findOne({ Email: user.Email });
-      let userEmail = { ...email };
-      if (userEmail.Email !== user.Email) {
-        isUser.destroy();
-      }
-    }
-    nameGetter(user);
+        .findOne({ Phone: number });
+        if (user == null) {
+          console.log("number doesnot exist in database");
+          resolve({ userExist: false });
+        } else if (user.block == true) {
+          resolve({ userBlock: true });
+          console.log("number is blocked");
+          resolve({ status: false });
+        } else {
+          resolve(user);
+        }
+    });
   },
 
   blockUser: (userId) => {

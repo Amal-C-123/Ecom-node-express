@@ -42,14 +42,14 @@
                   </a>
                 </div>
               </div>
-              <div class="header-middle-align-center">
+              {{!-- <div class="header-middle-align-center">
                 <div class="header-search-area">
                   <form class="header-searchbox">
                     <input type="search" class="form-control" placeholder="Search">
                     <button class="btn-submit" type="submit"><i class="pe-7s-search"></i></button>
                   </form>
                 </div>
-              </div>
+              </div> --}}
               <div class="header-middle-align-end">
                 <div class="header-action-area">
                   <div class="shopping-search">
@@ -61,9 +61,15 @@
                     </a>
                   </div>
                   <div class="shopping-cart">
-                    <button class="shopping-cart-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#AsideOffcanvasCart" aria-controls="offcanvasRightLabel">
-                      <i class="pe-7s-shopbag icon"></i>
-                      <sup class="shop-count">02</sup>
+                    <button class="shopping-cart-btn" type="button"  data-bs-target="#AsideOffcanvasCart" aria-controls="offcanvasRightLabel">
+                      <a href="/cart"><i class="pe-7s-shopbag icon"></i>
+                      {{#if user}}
+                          {{!-- <sup class="shop-count">02 {{cartCount}}</sup> --}}
+                          <span class="shop-count" id="cart-count">{{cartCount}}</span>
+                      {{/if}}
+                      </a> 
+                        {{!-- in the button class data-bs-toggle="offcanvas" --}}
+                      
                     </button>
                   </div>
                   <button class="btn-menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#AsideOffcanvasMenu" aria-controls="AsideOffcanvasMenu">
