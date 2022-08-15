@@ -1,25 +1,42 @@
+<div class="content-page">
+  <!-- Start content -->
+  <div class="content">
+    <div class="container">
 
-<div class="container d-flex justify-content-center " style="margin-top: 60px;">  
+      <!-- START ROW -->
+      <div class="row">
+        <div class="col-xl-12">
+          <h4 class="mt-4 header-title p-2">Add Category</h4>
+          <div class="container mt-3 ml-3">
+            <form action="/admin/add-category" class="w-50" method="POST">
+              <h5 style="font-size:0.9rem">Add New Category</h5>
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="exampleInputEmail1"
+                  name="category"
+                  aria-describedby="emailHelp"
+                />
+              </div>
 
-<form class="w-50" action="/admin/add-category"   method="POST">
-<h1>Add New Category</h1>
-  <div class="mb-3">
-   
-    <input
-      type="text"
-      class="form-control"
-      id="exampleInputEmail1"
-      name="category"
-      aria-describedby="emailHelp"
-    />
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- END ROW -->
+
+    </div>
+    <!-- container-fluid -->
 
   </div>
+  <!-- content -->
 
-  <button type="submit" class="btn btn-primary">Submit</button>
-
-  </div>
-  
-  
-</form>
+  <footer class="footer">
+    <span class="d-none d-sm-inline-block"> Cozmo Admin Panel </span>
+  </footer>
 
 </div>

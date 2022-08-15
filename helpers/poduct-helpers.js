@@ -3,6 +3,7 @@ var collection = require("../config/collections");
 const bcrypt = require("bcrypt");
 var objectId = require("mongodb").ObjectId;
 
+
 module.exports = {
   // addUser:(product,callback)=>{
 

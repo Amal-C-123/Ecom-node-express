@@ -1,59 +1,197 @@
-<div class="row">
-  <div class="col-md-6 m-auto">
-    <div class="containor mt-5 pl-5">
-      <h2 class="text-center">Create Account</h2>
-      <form action="/signup" method="POST" onsubmit="return(validateForm())">
-        {{#if signErr}}
-          <p class="error text-center" style="color: red;">Username already
-            taken</p>
-        {{/if}}
-        <p class="error text-center" id="submit-error" style="color: red;"></p>
-        <div class="form-group">
-          <label>User name</label>
-          <input
-            type="text"
-            class="form-control"
-            name="Email"
-            id="email"
-            placeholder="Enter username"
-          />
-          <p class="error text-center" id="email-error" style="color: red;"></p>
+<main class="main-content">
+    
+    <!--== Start My Account Area Wrapper ==-->
+    <section class="account-area">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-8 m-auto">
+            <div class="section-title text-center">
+              <h2 class="title">Register</h2>
+            </div>
+          </div>
+        </div>
+        <div class="row"> 
+          <div class="col-12">
+            <div class="register-form-content">
+              <form action="/signup" method="POST" onsubmit="return(validateForm())">
+                <div class="row">
 
-        </div>
-        <div class="form-group">
-          <label>Phone</label>
-          <input
-            type="text"
-            class="form-control"
-            id="phoneNumber"
-            name="Phone"
-            placeholder="Phone"
-          />
-          <p class="error text-center" id="phoneNumber-error" style="color: red;"></p>
+                  <div class="col-12">
+                    {{#if signErr}}
+                      <p class="error text-center" style="color: red;">Username already
+                        taken</p>
+                    {{/if}}
+                    <p class="error text-center" id="submit-error" style="color: red;"></p>
+                    <div class="form-group">
+                      <label for="username">User Name <span class="required">*</span></label>
+                      <input id="username" name="username" class="form-control" type="text" value="">
+                      <p class="error text-center" id="username-error" style="color: red;"></p>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="email">Email Address <span class="required">*</span></label>
+                      <input name="Email" id="email" class="form-control" type="email">
+                      <p class="error text-center" id="email-error" style="color: red;"></p>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="email">Phone <span class="required">*</span></label>
+                      <input id="phoneNumber"name="Phone"class="form-control" type="tel">
+                      <p class="error text-center" id="phoneNumber-error" style="color: red;"></p>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="password">Password <span class="required">*</span></label>
+                      <input type="password" name="Password" id="password" class="form-control">
+                      <p class="error text-center" id="password-error" style="color: red;"></p>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="password">Confirm Password <span class="required">*</span></label>
+                      <input id="confirmPassword" class="form-control" type="password">
+                      <p class="error text-center" id="confirmPassword-error" style="color: red;"></p>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group mb--0">
+                      <button class="btn-register" type="submit">Register</button>
+                    </div>
+                  </div>
 
+                      <a
+                    href="/login"
+                    class="text-secondary mt-3"
+                    style="width: fit-content; text-decoration: none;"
+                  >Already have account ?</a>
+              
+              </form>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            id="password"
-            class="form-control"
-            name="Password"
-            placeholder="Password"
-          />
-          <p class="error text-center" id="password-error" style="color: red;"></p>
-        </div>
+      </div>
+    </section>
+    <!--== End My Account Area Wrapper ==-->
+  </main>
 
-        <a
-          href="/login"
-          class="sign sign-info mt-5"
-          style="width: fit-content; text-decoration: none;"
-        >Already have account ?</a>
-        <div class="mx-auto m-3" style=" width: fit-content;">
-          <button type="submit" class="btn btn-primary" style="background-color: rgb(254, 123, 47);">Signup</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<script src="/javascripts/script.js"></script>
+  <script>
+var UserNameError= document.getElementById('username-error');
+{{!-- var FirstNameError = document.getElementById('firstName-error');
+var LastNameError = document.getElementById('lastName-error'); --}}
+var emailError = document.getElementById('email-error');
+var phoneNumberError = document.getElementById('phoneNumber-error')
+var passwordError = document.getElementById('password-error')
+var confirmPasswordError = document.getElementById('confirmPassword-error')
+var submitError = document.getElementById('submit-error');
+
+ function validateUserName() {
+
+  var UserName = document.getElementById('username').value;
+ if (UserName.length == 0) {
+     UserNameError.innerHTML = "Name is required";
+     return false;   }
+   {{!-- if (!UserName.match(/^[A-Za-z_ ]+$ /)) {
+     UserNameError.innerHTML = "Only letters";
+     return false;
+   } --}}
+   if (UserName.length < 3) {
+     UserNameError.innerHTML = "Enter a valid name";
+     return false;
+   }
+   UserNameError.innerHTML = ""
+   return true
+ }
+// function validateLastName() {
+//   var LastName = document.getElementById('lastName').value;
+
+//   if (LastName.length == 0) {
+//     LastNameError.innerHTML = "Name is required";
+//     return false;
+//   }
+//   if (!LastName.match(/^([A-Za-z])+$/)) {
+//     LastNameError.innerHTML = "Only letters";
+//     return false;
+//   }
+//   if (LastName.length < 3) {
+//     LastNameError.innerHTML = "Enter a valid name";
+//     return false;
+//   }
+//   LastNameError.innerHTML = ""
+//   return true
+// }
+
+function validateEmail() {
+  var email = document.getElementById('email').value;
+
+  if (email.length == 0) {
+    emailError.innerHTML = "Email is required";
+    return false;
+
+  }
+  if (!email.match(/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/)) {
+    emailError.innerHTML = "Email is invalid";
+    return false;
+  }
+  emailError.innerHTML = ""
+  return true
+}
+function validatePhoneNumber() {
+  var phone = document.getElementById('phoneNumber').value
+  if (phone.length < 10) {
+    phoneNumberError.innerHTML = "Phone number is required"
+    return false
+  }
+  if (phone.match(/^([A-Za-z])+$/)) {
+    LphoneNumberError.innerHTML = "Only numbers";
+    return false;
+  }
+  if (!phone.match(/^\d{10}$/)) {
+    phoneNumberError.innerHTML = "Phone number is invalid"
+    return false
+  }
+
+  phoneNumberError.innerHTML = ""
+  return true
+}
+
+function validatePassword() {
+  var password = document.getElementById('password').value;
+
+  if (password.length == 0) {
+    passwordError.innerHTML = "Password is required";
+    return false;
+
+  }
+  if (password.length < 3) {
+    passwordError.innerHTML = "Password must be atleast 3 characters ";
+    return false;
+  }
+  passwordError.innerHTML = ''
+  return true
+}
+
+ function validateConfirmPassword() {
+   var password = document.getElementById('password').value
+   var confirmPassword = document.getElementById('confirmPassword').value
+    if (password != confirmPassword) {
+      confirmPasswordError.innerHTML = "Please enter same password"
+      return false
+    }
+   confirmPasswordError.innerHTML = ''
+   return true
+ }
+
+
+function validateForm() {
+
+
+  if (!validateEmail() || !validatePhoneNumber() || !validatePassword() || !validateConfirmPassword() || !validateUserName()) {
+    submitError.innerHTML = 'Please fill the form properly';
+    return false;
+  }
+}
+
+</script>

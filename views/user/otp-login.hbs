@@ -1,35 +1,65 @@
-<div class="container-fluid row   justify-content">
-    <div class="col-md-6 m-auto">
-        <div class="otp-form  d-flex justify-content-center"> 
-        <div class="container mt-5 " >
-            <h2 class="text-center fs-5 fw-bold mt-3">LOGIN WITH PHONE NUMBER</h2>
-            
-            <form action="/otp-verification" method="POST" class="text-center mt-4" >
-            {{#if userBlock}}
+
+  <main class="main-content">
+
+    <!--== Start My Account Area Wrapper ==-->
+    <section class="account-area">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-8 m-auto">
+            <div class="section-title text-center">
+              <h3 class="mt-5">Login With Phone Number</h3>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="login-form-content">
+              <form action="/otp-verification" method="POST">
+                
+         {{#if userBlock}}
                 <p class="error text-center" style="color: red;">The number is blocked</p>
             {{/if}}
 
             {{#if userNotExist}}
                 <p class="error text-center" style="color: red;">User doesnot exist</p>
             {{/if}}
-                <div class="form-group text-center">
-                    <label class="mb-3" style="color: #1e1d1d;">Enter your phone number</label>
-                    <input type="text" class="form-control " name="number" placeholder="Phone" required>
-
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="username"> Enter your phone number <span class="required">*</span></label>
+                      <input name="number" placeholder="Phone" class="form-control">
+                    </div>
+                  </div>
+                  
+                  <div class="col-12">
+                    <div class="form-group">
+                      <button type="submit" class="btn-login">Verify</button>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group account-info-group mb--0">
+                      
+                      <a
+                      href="/signup"
+                      class="text-secondary"
+                      style="width: fit-content; text-decoration: none;"
+                    >Create new account</a>
+                <br />
+                      <a
+                        href="/"
+                        class="text-secondary"
+                        style="width: fit-content; text-decoration: none;"
+                      >Back to Home</a>
+                    </div>
+                  </div>
                 </div>
-               
-                 <a href="/signup" class="sign sign-info mt-4" style="width: fit-content; text-decoration: none; color:#6769f9;">Create new account</a>
-                 <br>
-                
-                 
-                <div class="mx-auto mt-3" style=" width: fit-content;">
-                   
-                    <button type="submit" class="btn " style="background-color: #6769f9; color:white;">Verify</button>
-                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--== End My Account Area Wrapper ==-->
+  </main>
 
-                 
-            </form>
-        </div>
-        </div>
-    </div>
-</div>
+  

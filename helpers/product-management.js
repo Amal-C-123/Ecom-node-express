@@ -3,6 +3,12 @@ var collection = require("../config/collections");
 const bcrypt = require("bcrypt");
 //const { response } = require("../app");
 var objectId = require("mongodb").ObjectId;
+var Handlebars = require('handlebars');
+
+Handlebars.registerHelper("inc", function(value, options)
+{
+    return parseInt(value) + 1;
+});
 
 module.exports = {
   getAllProducts: (proId) => {

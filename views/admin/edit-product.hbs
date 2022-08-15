@@ -1,68 +1,93 @@
-<div class="container d-flex justify-content-center" style="margin-top: 60px;">
+<div class="content-page">
+            <!-- Start content -->
+            <div class="content ">
+                <div class="container">
+                    
+                    <!-- START ROW -->
+                    <div class="row">
+                        <div class="col-xl-12 ">
+                            <h4 class="mt-4 header-title p-2 ">Edit Product</h4>
+                            <div class="container mt-3 ml-3">
+                                    <form
+                                    class=""
+                                    style="width: 75%;"
+                                    action="/admin/product-edit/{{editProductFormData._id}}"
+                                    method="POST"
+                                >
+                                    <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Name</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="exampleInputEmail1"
+                                        name="name"
+                                        aria-describedby="emailHelp"
+                                        placeholder="{{editProductFormData.name}}"
+                                    required/>
 
-  <form
-    class="w-50"
-    action="/admin/product-edit/{{editProductFormData._id}}"
-    method="POST"
-  >
-    <div class="mb-3">
-      <label for="exampleInputEmail1" class="form-label">Name</label>
-      <input
-        type="text"
-        class="form-control"
-        id="exampleInputEmail1"
-        name="name"
-        aria-describedby="emailHelp"
-        placeholder="{{editProductFormData.name}}"
-      required/>
+                                    </div>
+                                    <div class="mb-3">
+                                    <select
+                                        name="category"
+                                        class="form-select"
+                                        aria-label="Default select example"
+                                    >
+                                        <option name="category">{{editProductFormData.category}}</option>
+                                        {{#each categories}}
+                                        <option
+                                            name="option"
+                                            value="{{this.category}}"
+                                        >{{this.category}}</option>
+                                        {{/each}}
+                                    </select>
 
-    </div>
-    <div class="mb-3">
-      <select
-        name="category"
-        class="form-select"
-        aria-label="Default select example"
-      >
-        <option name="category">{{editProductFormData.category}}</option>
-        {{#each categories}}
-          <option
-            name="option"
-            value="{{this.category}}"
-          >{{this.category}}</option>
-        {{/each}}
-      </select>
+                                    </div>
+                                    <div class="mb-3">
+                                    <div class="form-floating">
+                                        <label for="floatingTextarea">Description</label>
+                                        <textarea name="description" class="form-control" id="floatingTextarea" placeholder="{{editProductFormData.description}}"></textarea>
+                                    </div>
 
-    </div>
-    <div class="mb-3">
-      <div class="form-floating">
-        <label for="floatingTextarea">Description</label>
-        <textarea name="description" class="form-control" id="floatingTextarea" placeholder="{{editProductFormData.description}}"></textarea>
-      </div>
+                                    </div>
+                                    <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">price</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="exampleInputEmail1"
+                                        name="price"
+                                        aria-describedby="emailHelp"
+                                        placeholder="{{editProductFormData.price}}"
+                                    required/>
 
-    </div>
-    <div class="mb-3">
-      <label for="exampleInputEmail1" class="form-label">price</label>
-      <input
-        type="text"
-        class="form-control"
-        id="exampleInputEmail1"
-        name="price"
-        aria-describedby="emailHelp"
-        placeholder="{{editProductFormData.price}}"
-      required/>
+                                    </div>
 
-    </div>
+                                    <!--<div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Images</label>
+                                <div class="mb-3">
+                                
+                                <input class="form-control" type="file" id="formFile" name="image"  multiple >
+                                </div>
 
-    <!--<div class="mb-3">
-    <label for="exampleInputEmail1" class="form-label">Images</label>
-   <div class="mb-3">
- 
-  <input class="form-control" type="file" id="formFile" name="image"  multiple >
-</div>
+                                </div>-->
 
-  </div>-->
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                            </div>
+                            
+                        </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+                    </div>
+                    <!-- END ROW -->
 
-</div>
+                </div>
+                <!-- container-fluid -->
+
+            </div>
+            <!-- content -->
+
+            <footer class="footer">
+            <span class="d-none d-sm-inline-block"> Cozmo Admin Panel   </span>
+            </footer>
+
+        </div>

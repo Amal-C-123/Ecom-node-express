@@ -15,6 +15,7 @@ const client = require("twilio")(
 );
 
 let User_number = "";
+let trueOtpSessionUser = {}
 
 const verifyLogin = (req, res, next) => {
   if (req.session.loggedIn) {
@@ -109,19 +110,19 @@ router.post("/signup", (req, res) => {
 
 //otp section
 router.get("/otp-login", (req, res) => {
-  res.render("user/otp-login");
+  res.render("user/otp-login",{userHead: true});
   req.session.loginErr = false;
 });
 
 router.post("/otp-verification", (req, res) => {
   userHelpers.numberExist(req.body.number).then((response) => {
     if (response.userExist == false) {
-      res.render("user/otp-login", { userNotExist: true });
+      res.render("user/otp-login", {userHead: true, userNotExist: true });
     } else if (response.userBlock == true) {
-      res.render("user/otp-login", { userBlock: true });
+      res.render("user/otp-login", { userHead: true,userBlock: true });
     } else {
-      req.session.user = response;
-      // req.session.user = resp.Email;
+      // req.session.user = response;
+      trueOtpSessionUser=response
       const { number } = req.body;
       console.log(number);
       User_number = number;
@@ -129,7 +130,7 @@ router.post("/otp-verification", (req, res) => {
         to: `+91${number}`,
         channel: "sms",
       });
-      res.render("user/otp-verify", { user: response.user });
+      res.render("user/otp-verify", { userHead:true,user: response.user });
     }
   });
 });
@@ -148,8 +149,9 @@ router.post("/otp-matching", function (req, res) {
       if (resp.valid == false) {
         req.session.otp = true;
         let otpvalidation = req.session.otp;
-        res.render("user/otp-verify", { otpvalidation });
+        res.render("user/otp-verify", {userHead:true, otpvalidation });
       } else if (resp.valid == true) {
+        req.session.user=trueOtpSessionUser
         req.session.loggedIn = true;
         res.redirect("/");
       }

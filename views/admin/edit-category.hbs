@@ -1,26 +1,46 @@
+<div class="content-page">
+  <!-- Start content -->
+  <div class="content">
+    <div class="container">
 
-<div class="container d-flex justify-content-center " style="margin-top: 60px;">  
+      <!-- START ROW -->
+      <div class="row">
+        <div class="col-xl-12">
+          <h4 class="mt-4 header-title p-2">Edit Category</h4>
+          <div class="container mt-3 ml-3">
+            <form
+              action="/admin/edit-category/{{category._id}}"
+              method="POST"
+              class="w-50"
+            >
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="exampleInputEmail1"
+                  name="category"
+                  aria-describedby="emailHelp"
+                  placeholder="{{category.category}}"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
 
-<form class="w-50" action="/admin/edit-category/{{category._id}}"   method="POST">
-<h1>Edit Category</h1>
-  <div class="mb-3">
-   
-    <input
-      type="text"
-      class="form-control"
-      id="exampleInputEmail1"
-      name="category"
-      aria-describedby="emailHelp"  
-      placeholder="{{category.category}}"
-    required/>
+        </div>
+
+      </div>
+      <!-- END ROW -->
+
+    </div>
+    <!-- container-fluid -->
 
   </div>
+  <!-- content -->
 
-  <button type="submit" class="btn btn-primary">Submit</button>
-
-  </div>
-  
-  
-</form>
+  <footer class="footer">
+    <span class="d-none d-sm-inline-block"> Cozmo Admin Panel </span>
+  </footer>
 
 </div>

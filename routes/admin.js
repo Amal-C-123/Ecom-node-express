@@ -1,11 +1,13 @@
 var express = require("express");
 var router = express.Router();
 const session = require("express-session");
-
 var productHelpers = require("../helpers/poduct-helpers");
 const userHelpers = require("../helpers/user-helpers");
 const itemHelpers = require("../helpers/product-management");
 const store = require("../multer/multer");
+
+
+
 let userName = "admin";
 let pin = "12345";
 
@@ -13,7 +15,10 @@ const verifyLogin = (req, res, next) => {
   if (req.session.users) {
     next();
   } else {
-    res.render("admin/admin-login", { admin: false, errout: req.session.err });
+    res.render("admin/admin-login", {
+      adminLogin: true,
+      errout: req.session.err,
+    });
     req.session.err = false;
   }
 };
@@ -21,62 +26,38 @@ const verifyLogin = (req, res, next) => {
 // get user listing
 router.get("/", (req, res) => {
   if (req.session.users) {
-    res.redirect("/admin/view-users");
+    res.redirect("/admin/admin-dashboard");
   } else {
-    res.render("admin/admin-login", { admin: false, errout: req.session.err });
+    res.render("admin/admin-login", {
+      adminLogin: true,
+      errout: req.session.err,
+    });
     req.session.err = false;
   }
 });
 
-router.post("/view-users", (req, res) => {
+router.post("/view-dashboard", (req, res) => {
   const { Email, Password } = req.body;
   if (userName === Email && pin === Password) {
     req.session.check = true;
     req.session.users = {
       userName,
     };
-    productHelpers.getAlluser().then((products) => {
-      res.redirect("/admin/view-users");
-    });
+    res.redirect("/admin/admin-dashboard");
   } else {
     req.session.err = "incorrect username or password";
     res.redirect("/admin");
   }
 });
 
+router.get("/admin-dashboard", verifyLogin, (req, res) => {
+  res.render("admin/adminDashboard", { admin: true });
+});
+
+//users
 router.get("/view-users", verifyLogin, (req, res) => {
   productHelpers.getAlluser().then((products) => {
     res.render("admin/view-users", { admin: true, products });
-  });
-});
-
-router.get("/add-user", verifyLogin, function (req, res) {
-  res.render("admin/add-user", { admin: true });
-});
-
-router.post("/add-user", (req, res) => {
-  console.log(req.body);
-  productHelpers.doAdd(req.body).then((response) => {
-    res.redirect("/admin");
-  });
-});
-
-//user delete
-router.get("/delete-product/:id", verifyLogin, (req, res) => {
-  let proId = req.params.id;
-  productHelpers.deleteProduct(proId).then((response) => {
-    res.redirect("/admin");
-  });
-});
-
-router.get("/update-user/:id", verifyLogin, async (req, res) => {
-  let user = await productHelpers.getProductDetails(req.params.id);
-  res.render("admin/update-user", { user, admin: true });
-});
-
-router.post("/update-user/:id", (req, res) => {
-  productHelpers.updateUser(req.params.id, req.body).then((response) => {
-    res.redirect("/admin");
   });
 });
 
@@ -183,7 +164,7 @@ router.post("/add-category", verifyLogin, (req, res) => {
 
 router.get("/edit-categories/:id", verifyLogin, (req, res) => {
   itemHelpers.getSingleCategory(req.params.id).then((category) => {
-    res.render("admin/edit-category", { category });
+    res.render("admin/edit-category", {admin:true, category });
   });
 });
 
@@ -194,7 +175,7 @@ router.post("/edit-category/:id", (req, res) => {
 
 router.get("/delete-category/:id", verifyLogin, (req, res) => {
   itemHelpers.deleteCategory(req.params.id).then((response) => {
-    res.redirect("/admin/categories",);
+    res.redirect("/admin/categories");
   });
 });
 
@@ -202,5 +183,5 @@ router.get("/logout", (req, res) => {
   req.session.users = null;
   res.redirect("/admin");
 });
-  
+
 module.exports = router;

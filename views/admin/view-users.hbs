@@ -1,47 +1,60 @@
-<section class="usertable">
-    <div class="container" >
-        <div class="row mt-3 mb-2">
-            <a href="/admin/add-user" class="btn btn-success ms-auto" style="width: fit-content;">Add User</a>
+<div class="content-page">
+            <!-- Start content -->
+            <div class="content">
+                <div class="container-fluid">
+                    
+                    <!-- START ROW -->
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="card m-b-30">
+                                <div class="card-body">
+                                    <h4 class="mt-0 header-title mb-4">Users</h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover ">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Email</th>
+                                                    <th scope="col">Phone</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col">Action</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{#each products}}
+                                                <tr>
+                                                    <td> {{this.username}} </td>
+                                                    <td>{{this.Email}} </td>
+                                                    <td>{{this.Phone}} </td>
+                                                    {{#if this.block}}
+                                                    <td><p style="color: red;">Blocked</p> </td>
+                                                    <td><a href="/admin/Un-Block-user/{{this._id}}" onclick="return confirm('Do you want to UnBlock {{this.username}} ?')" class="btn btn-danger btn-md">UnBlock</a></td>
+                                                    {{else}}
+                                                    <td><p style="color: rgb(23, 209, 23);">Active</p> </td>
+                                                    <td><a href="/admin/Block-user/{{this._id}}" class="btn btn-primary btn-md">Block</a></td>
+                                                    {{/if}}
+                                                </tr>
+                                              {{/each}}  
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- END ROW -->
+
+                </div>
+                <!-- container-fluid -->
+
+            </div>
+            <!-- content -->
+
+            <footer class="footer">
+            <span class="d-none d-sm-inline-block"> Cozmo Admin Panel   </span>
+            </footer>
+
         </div>
-        <table class="table mt-2" id="usersTable" style="background-color: rgb(241, 241, 246);">
-            <thead>
-                <tr>
-                    <th scope="col">No</th>
-                    <th scope="col">User name</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Update</th>
-                    {{!-- <th scope="col">Delete</th> --}}
-                    <th scope="col">block</th>
-                    {{!-- <th scope="col">Price</th>
-                    <th scope="col">Image</th> --}}
-                </tr>
-            </thead>
-            <tbody>
-                {{#each products}}
-                <tr>
-                    <th scope="row">{{@index}}</th>
-                    <td>{{this.Email}}</td>
-                    <td>{{this.Phone}}</td>
-                    {{!-- <td>{{this.description}}</td>
-                    <td><img style="width: 50px;height: 50px;" src="{{this.image}}" alt=""></td> --}}
-                    <td>
-                        <a href="/admin/update-user/{{this._id}}" class="btn btn-info">Update</a>
-                        </td>
-                        {{!-- <td>
-                        <a href="/admin/delete-product/{{this._id}}" class="btn btn-danger"
-                            onclick="return confirm('Are you want to delete {{this.Name}} ?')">Delete</a>
-                        </td> --}}
-                        <td>
-                             {{#if this.block}}
-                        <a href="/admin/Un-Block-user/{{this._id}}" class="btn btn-danger"
-                            onclick="return confirm('Do you want to UnBlock {{this.Name}} ?')">UnBlock</a>
-                           {{else}}
-                       <a href="/admin/Block-user/{{this._id}}" class="btn btn-success w-auto ms-auto">Block</a>
-                       {{/if}}
-                    </td>
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
-    </div>
-</section>
