@@ -66,6 +66,15 @@ app.use((req, res, next) => {
 app.use("/", userRouter);
 app.use("/admin", adminRouter);
 
+app.get('/admin/*',(req, res)=>{
+  res.render('admin/404')
+})
+
+app.get("*", (req, res) => {
+  res.render("user/404",{userHead:true});
+});
+
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

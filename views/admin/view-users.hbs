@@ -29,7 +29,7 @@
                                                     <td>{{this.Phone}} </td>
                                                     {{#if this.block}}
                                                     <td><p style="color: red;">Blocked</p> </td>
-                                                    <td><a href="/admin/Un-Block-user/{{this._id}}" onclick="return confirm('Do you want to UnBlock {{this.username}} ?')" class="btn btn-danger btn-md">UnBlock</a></td>
+                                                    <td><a href="/admin/Un-Block-user/{{this._id}}" id="unblockUser" onclick=" unblockAlert('{{this.username}}')" class="btn btn-danger btn-md">UnBlock</a></td>
                                                     {{else}}
                                                     <td><p style="color: rgb(23, 209, 23);">Active</p> </td>
                                                     <td><a href="/admin/Block-user/{{this._id}}" class="btn btn-primary btn-md">Block</a></td>
@@ -57,4 +57,10 @@
             <span class="d-none d-sm-inline-block"> Cozmo Admin Panel   </span>
             </footer>
 
-        </div>
+        </div><script>
+    function unblockAlert(msg) {
+  swal(`Do you want to unblock ${msg}`).then(() => {
+    location.reload();
+  });
+}
+  </script>

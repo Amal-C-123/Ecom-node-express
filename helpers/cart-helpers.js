@@ -108,7 +108,7 @@ module.exports = {
           // },
         ])
         .toArray();
-        // console.log(cartItems[0]);
+        // console.log(cartItems[0])
       resolve(cartItems);
     });
   },
@@ -232,6 +232,16 @@ module.exports = {
     });
   },
 
+  getCartProductList: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      let cart = await db
+        .get()
+        .collection(collection.CART_COLLECTION)
+        .findOne({ user: objectId(userId) });
+      resolve(cart.products);
+    });
+  },
+
   placeOrder: (order, products, total) => {
     return new Promise(async (resolve, reject) => {
       let status = order.PaymentMethod === "COD" ? "placed" : "pending";
@@ -261,6 +271,16 @@ module.exports = {
             .deleteOne({ user: objectId(order.userId) });
           resolve();
         });
+    });
+  },
+
+  getUserOrders: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      let orders = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .find({ userId: objectId(userId) }).toArray()
+      resolve(orders);
     });
   },
 

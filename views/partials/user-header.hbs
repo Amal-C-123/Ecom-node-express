@@ -19,7 +19,26 @@
                     <ul>
                       <li class="number"><i class="fa fa-phone"></i><a href="tel://0123456789">+00 123 456 789</a></li>
                       <li class="email"><i class="fa fa-envelope"></i><a href="mailto://demo@example.com">demo@example.com</a></li>
-                      <li class="account"><i class="fa fa-user"></i><a href="/user-dashboard">Account</a></li>
+                      
+                      
+
+                      {{#if user}}
+                      <li class="account">
+                              <div class="dropdown">
+                          <button class="btn btn-sm btn-secondary dropdown-toggle" style="background-color:#eb3e32; border:none" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{user.username}}
+                          </button>
+                          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                          </ul>
+                        </div>
+                      </li>
+                      
+                        {{else}}
+                            <li class="account"><i class="fa fa-user"></i>
+                      <a href="/login">Account</a>
+                      </li>
+                        {{/if}}
                     </ul>
                   </div>
                 </div>
@@ -42,14 +61,7 @@
                   </a>
                 </div>
               </div>
-              {{!-- <div class="header-middle-align-center">
-                <div class="header-search-area">
-                  <form class="header-searchbox">
-                    <input type="search" class="form-control" placeholder="Search">
-                    <button class="btn-submit" type="submit"><i class="pe-7s-search"></i></button>
-                  </form>
-                </div>
-              </div> --}}
+              
               <div class="header-middle-align-end">
                 <div class="header-action-area">
                   <div class="shopping-search">
@@ -66,6 +78,7 @@
                       {{#if user}}
                           {{!-- <sup class="shop-count">02 {{cartCount}}</sup> --}}
                           <span class="shop-count" id="cart-count">{{cartCount}}</span>
+                          
                       {{/if}}
                       </a> 
                         {{!-- in the button class data-bs-toggle="offcanvas" --}}
@@ -89,69 +102,11 @@
             <div class="header-align">
               <div class="header-navigation-area position-relative">
                 <ul class="main-menu nav">
-                  <li class=""><a href="/"><span>Home</span></a> 
-                  {{!-- above class has-submenu commented --}}
-                    {{!-- <ul class="submenu-nav">
-                      <li><a href="index.html"><span>Home One</span></a></li>
-                      <li><a href="index-two.html"><span>Home Two</span></a></li>
-                    </ul> --}}
-                  </li>
-                  {{!-- <li><a href="about-us.html"><span>About</span></a></li> --}}
-                  <li class="has-submenu"><a href="#/"><span>Pages</span></a>
-                    <ul class="submenu-nav">
-                      <li><a href="/user-dashboard"><span>Account</span></a></li>
-                      <li><a href="/login"><span>Login</span></a></li>
-                      <li><a href="/signup"><span>Register</span></a></li>
-                      {{!-- <li><a href="page-not-found.html"><span>Page Not Found</span></a></li> --}}
-                    </ul>
-                  </li>
-                  <li class="has-submenu position-static"><a href="#/"><span>Shop</span></a>
-                    <ul class="submenu-nav submenu-nav-mega column-3">
-                      {{!-- <li class="mega-menu-item"><a href="#/" class="mega-title"><span>Shop Layout</span></a>
-                        <ul>
-                          <li><a href="shop-three-columns.html"><span>Shop 3 Column</span></a></li>
-                          <li><a href="shop-four-columns.html"><span>Shop 4 Column</span></a></li>
-                          <li><a href="shop.html"><span>Shop Left Sidebar</span></a></li>
-                          <li><a href="shop-right-sidebar.html"><span>Shop Right Sidebar</span></a></li>
-                        </ul>
-                      </li> --}}
-                      {{!-- <li class="mega-menu-item"><a href="#/" class="mega-title"><span>Single Product</span></a>
-                        <ul>
-                          <li><a href="single-normal-product.html"><span>Single Product Normal</span></a></li>
-                          <li><a href="single-product.html"><span>Single Product Variable</span></a></li>
-                          <li><a href="single-group-product.html"><span>Single Product Group</span></a></li>
-                          <li><a href="single-affiliate-product.html"><span>Single Product Affiliate</span></a></li>
-                        </ul>
-                      </li> --}}
-                      <li class="mega-menu-item"><a href="#/" class="mega-title"><span>Others Pages</span></a>
-                        <ul>
-                          <li><a href="shop-cart.html"><span>Shopping Cart</span></a></li>
-                          <li><a href="shop-checkout.html"><span>Checkout</span></a></li>
-                          <li><a href="shop-wishlist.html"><span>Wishlist</span></a></li>
-                          {{!-- <li><a href="shop-compare.html"><span>Compare</span></a></li> --}}
-                        </ul>
-                      </li>
-                    </ul>
-                  </li>
-                  {{!-- <li class="has-submenu"><a href="#/"><span>Blog</span></a>
-                    <ul class="submenu-nav submenu-nav-mega">
-                      <li class="mega-menu-item"><a href="#/" class="mega-title">Blog Layout</a>
-                        <ul>
-                          <li><a href="blog.html">Blog Grid</a></li>
-                          <li><a href="blog-left-sidebar.html">Blog Left Sidebar</a></li>
-                          <li><a href="blog-right-sidebar.html">Blog Right Sidebar</a></li>
-                        </ul>
-                      </li>
-                      <li class="mega-menu-item"><a href="#/" class="mega-title">Single Blog</a>
-                        <ul>
-                          <li><a href="blog-details-no-sidebar.html">Blog Details</a></li>
-                          <li><a href="blog-details-left-sidebar.html">Blog Details Left Sidebar</a></li>
-                          <li><a href="blog-details.html">Blog Details Right Sidebar</a></li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </li> --}}
-                  <li><a href="contact.html"><span>Contact</span></a></li>
+                  <li ><a href="/"><span>Home</span></a></li>
+                  <li><a href="#/"><span>Products</span></a>
+                  <li><a href="/user-orders-list"><span>Orders</span></a>
+                  <li><a href="#"><span>Profile</span></a></li>
+                  
                 </ul>
               </div>
             </div>

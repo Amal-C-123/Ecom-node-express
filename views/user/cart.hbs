@@ -2,11 +2,12 @@
 
   <!--== Start Blog Area Wrapper ==-->
   <section class="shopping-cart-area">
-    <div class="container">
+    {{#if total}}
+          <div class="container">
       <div class="row">
         <div class="col-md-12">
           <div class="shopping-cart-form table-responsive">
-            <form action="#" method="post">
+            
               <table class="table text-center">
                 <thead>
                   <tr>
@@ -60,14 +61,10 @@
                         >+</button>
                       </td>
 
-                      
-                      {{!-- <td class="product-subtotal">
-                        <span class="price">£69.99</span>
-                      </td> --}}
                     </tr>
                   {{/each}}
 
-                  {{! <tr class="actions">
+                    {{! <tr class="actions">
                       <td class="border-0" colspan="6">
                         <button type="submit" class="update-cart" disabled>Update cart</button>
                         <button type="submit" class="clear-cart">Clear Cart</button>
@@ -76,60 +73,12 @@
                     </tr> }}
                 </tbody>
               </table>
-            </form>
+            
           </div>
         </div>
       </div>
       <div class="row row-gutter-50">
-        {{! <div class="col-md-6 col-lg-4">
-            <div id="CategoriesAccordion" class="shipping-form-calculate">
-              <div class="section-title-cart">
-                <h5 class="title">Calculate Shipping</h5>
-                <div class="desc">
-                  <p>Estimate your shipping fee *</p>
-                </div>
-              </div>
-              <span data-bs-toggle="collapse" data-bs-target="#CategoriesTwo" aria-expanded="true" role="button">Calculate shipping</span>
-              <div id="CategoriesTwo" class="collapse show" data-bs-parent="#CategoriesAccordion">
-                <form action="#" method="post">
-                  <div class="row row-gutter-50">
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label class="visually-hidden" for="FormCountry">State</label>
-                        <select id="FormCountry" class="form-control">
-                          <option selected>Select a country…</option>
-                          <option>...</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label for="stateCounty" class="visually-hidden">State / County</label>
-                        <input type="text" id="stateCounty" class="form-control" placeholder="State / County">
-                      </div>
-                    </div>
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label for="townCity" class="visually-hidden">Town / City</label>
-                        <input type="text" id="townCity" class="form-control" placeholder="Town / City">
-                      </div>
-                    </div>
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label for="postcodeZip" class="visually-hidden">Postcode / ZIP</label>
-                        <input type="text" id="postcodeZip" class="form-control" placeholder="Postcode / ZIP">
-                      </div>
-                    </div>
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <button type="submit" class="update-totals">Update totals</button>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div> }}
+        
         <div class="col-md-6 col-lg-4">
           <div class="shipping-form-coupon">
             <div class="section-title-cart">
@@ -138,7 +87,7 @@
                 <p>Enter your coupon code if you have one.</p>
               </div>
             </div>
-            <form action="#" method="post">
+            <form action="#" method="">
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
@@ -168,35 +117,7 @@
             <div class="cart-total-table">
               <table class="table">
                 <tbody>
-                  {{! <tr class="cart-subtotal">
-                      <td>
-                        <p class="value">Subtotal</p>
-                      </td>
-                      <td>
-                        <p class="price">£128.00</p>
-                      </td>
-                    </tr> }}
-                  {{! <tr class="shipping">
-                      <td>
-                        <p class="value">Shipping</p>
-                      </td>
-                      <td>
-                        <ul class="shipping-list">
-                          <li class="radio">
-                            <input type="radio" name="shipping" id="radio1" checked>
-                            <label for="radio1"><span></span> Flat Rate</label>
-                          </li>
-                          <li class="radio">
-                            <input type="radio" name="shipping" id="radio2">
-                            <label for="radio2"><span></span> Free Shipping</label>
-                          </li>
-                          <li class="radio">
-                            <input type="radio" name="shipping" id="radio3">
-                            <label for="radio3"><span></span> Local Pickup</label>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr> }}
+                  
                   <tr class="order-total">
                     <td>
                       <p class="value">Total</p>
@@ -214,6 +135,22 @@
         </div>
       </div>
     </div>
+    {{else}}
+    <div class="container">
+    
+          <div class="row">
+        <div class="col-md-12">
+          <div class="">
+              <div class="container text-center" style="background: rgb(231, 230, 230); border-radius:25px">
+                <p style="font-size: 1.5rem;">Cart is empty</p>
+              </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+    
   </section>
   <!--== End Blog Area Wrapper ==-->
 </main>

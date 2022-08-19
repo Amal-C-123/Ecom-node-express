@@ -1,0 +1,74 @@
+<main class="main-content">
+  
+
+  <!--== Start My Account Wrapper ==-->
+  <section class="my-account-area">
+    <div class="container pt--0 pb--0">
+      <div class="row">
+        <div class="col-lg-12"> 
+          <div class="myaccount-page-wrapper">
+            <div class="row">
+              
+              <div class="col-lg-12 col-md-12">
+                <div class="tab-content" id="nav-tabContent">
+                  <div
+                    class="tab-pane fade show active"
+                    id="dashboad"
+                    role="tabpanel"
+                    aria-labelledby="dashboad-tab"
+                  >
+                    <div class="myaccount-content">
+                      <h3>Orders</h3>
+                        <div class="myaccount-content">
+                      
+                        <table class="table table-bordered">
+                          <thead class="thead-light">
+                            <tr>
+                              <th>Date</th>
+                              <th>Address</th>
+                              <th>Phone</th>
+                              <th>Amount</th>
+                              <th>Status</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {{#each orders}}
+                            <tr>
+                              <td>{{this.date}} </td>
+                              <td>{{this.deliveryDetails.address}} </td>
+                              <td>{{this.deliveryDetails.mobile}}</td>
+                              <td>₹ {{this.deliveryDetails.totalAmount}}</td>
+                              <td>{{this.status}}</td>
+                              <td><a class="btn btn-sm btn-primary" style="margin-right: 0.5rem;" href="/view-order-details/{{this._id}}">View Details</a><button class="btn btn-sm btn-danger " onclick="cancelOrder('{{this._id}}')">Cancel</button></td>
+                            </tr>
+                            {{/each}}
+                          </tbody>
+                        </table>
+                      
+                    </div>
+                      
+                    </div>
+                  </div>
+                  <div
+                    class="tab-pane fade"
+                    id="orders"
+                    role="tabpanel"
+                    aria-labelledby="orders-tab"
+                  >
+                    
+                  </div>
+                  
+                  
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--== End My Account Wrapper ==-->
+</main>

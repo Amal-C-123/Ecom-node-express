@@ -3,11 +3,11 @@ var collection = require("../config/collections");
 const bcrypt = require("bcrypt");
 //const { response } = require("../app");
 var objectId = require("mongodb").ObjectId;
-var Handlebars = require('handlebars');
+var Handlebars = require("handlebars");
+const { response } = require("express");
 
-Handlebars.registerHelper("inc", function(value, options)
-{
-    return parseInt(value) + 1;
+Handlebars.registerHelper("inc", function (value, options) {
+  return parseInt(value) + 1;
 });
 
 module.exports = {
@@ -138,6 +138,35 @@ module.exports = {
         .then((response) => {
           resolve(response);
         });
+    });
+  },
+
+  //admin-orders
+  getOrders: () => {
+    return new Promise(async (resolve, reject) => {
+      let Items = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .find()
+        .toArray();
+      resolve(Items);
+    });
+  },
+
+  changeOrderStatus: (orderId, status) => {
+    return new Promise(async (resolve, reject) => {
+      let Order = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .updateOne(
+          { _id: objectId(orderId) },
+          {
+            $set: {
+              status: status,
+            },
+          }
+        )
+        resolve({statusChange: true})
     });
   },
 };

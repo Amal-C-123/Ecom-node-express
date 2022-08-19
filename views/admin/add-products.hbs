@@ -1,56 +1,109 @@
+<div class="content-page">
+  <!-- Start content -->
+  <div class="content">
+    <div class="container">
 
-<div class="container d-flex justify-content-center " style="margin-top: 60px;">  
+      <!-- START ROW -->
+      <div class="row">
+        <div class="col-xl-12">
+          <h4 class="mt-4 header-title p-2">Add Products</h4>
+          <div class="container mt-3 ml-3">
+            <form
+              action="/admin/add-item"
+              enctype="multipart/form-data"
+              method="POST"
+              style="width: 70%;"
+            >
+              <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="exampleInputEmail1"
+                  name="name"
+                  aria-describedby="emailHelp"
+                  required
+                />
 
-<form class="w-50" action="/admin/add-item" enctype="multipart/form-data"  method="POST">
-  <div class="mb-3">
-    <label for="exampleInputEmail1" class="form-label">Name</label>
-    <input
-      type="text"
-      class="form-control"
-      id="exampleInputEmail1"
-      name="name"
-      aria-describedby="emailHelp"
-    />
+              </div>
+              <div class="mb-3">
+                <select
+                  name="category"
+                  class="form-select"
+                  aria-label="Default select example"
+                >
+                  <option name="category">Category</option>
+                  {{#each categories}}
+                    <option
+                      name="option"
+                      value="{{this.category}}"
+                    >{{this.category}}</option>
+                  {{/each}}
+                </select>
+
+              </div>
+              <div class="mb-3">
+                <div class="form-floating">
+                  <label for="floatingTextarea">Description</label>
+                  <textarea
+                    name="description"
+                    class="form-control"
+                    placeholder="Product description"
+                    id="floatingTextarea"
+                    required
+                  ></textarea>
+                </div>
+
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">price</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="exampleInputEmail1"
+                  name="price"
+                  aria-describedby="emailHelp"
+                  required
+                />
+
+              </div>
+
+              <div class="mb-3">
+                <label
+                  for="exampleInputEmail1"
+                  class="form-label"
+                >Images</label>
+                <div class="mb-3">
+
+                  <input
+                    class="form-control"
+                    type="file"
+                    id="formFile"
+                    name="image"
+                    multiple
+                    required
+                  />
+                </div>
+
+              </div>
+
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- END ROW -->
+
+    </div>
+    <!-- container-fluid -->
 
   </div>
-  <div class="mb-3">
-   <select name="category" class="form-select" aria-label="Default select example">
-  <option name="category" >Category</option>
-  {{#each categories}}
-  <option name="option"  value="{{this.category}}">{{this.category}}</option>
-  {{/each}}
-</select>
+  <!-- content -->
 
-  </div>
-  <div class="mb-3">
-    <div class="form-floating">
-  <textarea   name="description" class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
-  <label for="floatingTextarea">Description</label>
-</div>
-
-  </div>
-  <div class="mb-3">
-    <label for="exampleInputEmail1" class="form-label">price</label>
-    <input
-      type="text"
-      class="form-control"
-      id="exampleInputEmail1"
-        name="price"
-      aria-describedby="emailHelp"
-    />
-
-  </div>
-
-  <div class="mb-3">
-    <label for="exampleInputEmail1" class="form-label">Images</label>
-   <div class="mb-3">
- 
-  <input class="form-control" type="file" id="formFile" name="image"  multiple >
-</div>
-
-  </div>
-  
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+  <footer class="footer">
+    <span class="d-none d-sm-inline-block"> Cozmo Admin Panel </span>
+  </footer>
 
 </div>

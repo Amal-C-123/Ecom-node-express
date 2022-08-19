@@ -1,76 +1,98 @@
+<main class="main-content">
 
-  <main class="main-content">
-
-    <!--== Start My Account Area Wrapper ==-->
-    <section class="account-area">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-8 m-auto">
-            <div class="section-title text-center">
-              <h2 class="title">Login</h2>
-            </div>
+  <!--== Start My Account Area Wrapper ==-->
+  <section class="account-area">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-8 m-auto">
+          <div class="section-title text-center">
+            <h2 class="title">Login</h2>
           </div>
         </div>
-        <div class="row">
-          <div class="col-12">
-            <div class="login-form-content">
-              <form action="/login" method="POST" onsubmit="return(validateLogin())">
-                <p id="submit-error" style="color: red;"></p>
-         {{#if loginErr}}
-          <p style="color: red;">Invalid username or
-            password</p>
-        {{/if}}
-        {{#if blocked}}
-          <p class="error text-center" style="color: red;">Your account is
-            blocked</p>
-        {{/if}}
-                <div class="row">
-                  <div class="col-12">
-                    <div class="form-group">
-                      <label for="username"> Email address <span class="required">*</span></label>
-                      <input id="email" name="Email" class="form-control" type="email"onchange="validateEmail()">
-                      <p id="email-error" style="color: red;"></p>
-                    </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="login-form-content">
+            <form
+              action="/login"
+              method="POST"
+              onsubmit="return(validateLogin())"
+            >
+              <p id="submit-error" style="color: red;"></p>
+              {{#if loginErr}}
+                <p style="color: red;">Invalid username or password</p>
+              {{/if}}
+              {{#if blocked}}
+                <p class="error text-center" style="color: red;">Your account is
+                  blocked</p>
+              {{/if}}
+              {{#if notLogged}}
+                <p
+                  class="error text-center"
+                  style="color: red;"
+                >{{notLogged}}</p>
+
+              {{/if}}
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label for="username">
+                      Email address
+                      <span class="required">*</span></label>
+                    <input
+                      id="email"
+                      name="Email"
+                      class="form-control"
+                      type="email"
+                      onchange="validateEmail()"
+                    />
+                    <p id="email-error" style="color: red;"></p>
                   </div>
-                  <div class="col-12">
-                    <div class="form-group">
-                      <label for="password">Password <span class="required">*</span></label>
-                      <input id="password" name="Password" class="form-control" type="password">
-                      <p id="password-error" style="color: red;"></p>
-                    </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-group">
+                    <label for="password">Password
+                      <span class="required">*</span></label>
+                    <input
+                      id="password"
+                      name="Password"
+                      class="form-control"
+                      type="password"
+                    />
+                    <p id="password-error" style="color: red;"></p>
                   </div>
-                  <div class="col-12">
-                    <div class="form-group">
-                      <button type="submit" class="btn-login">Login</button>
-                    </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-group">
+                    <button type="submit" class="btn-login">Login</button>
                   </div>
-                  <div class="col-12">
-                    <div class="form-group account-info-group mb--0">
-                      
-                      <a
+                </div>
+                <div class="col-12">
+                  <div class="form-group account-info-group mb--0">
+
+                    <a
                       href="/signup"
                       class="text-secondary"
                       style="width: fit-content; text-decoration: none;"
                     >Create new account</a>
-                <br />
-                      <a
-                        href="/otp-login"
-                        class="text-secondary"
-                        style="width: fit-content; text-decoration: none;"
-                      >Login using phone number</a>
-                    </div>
+                    <br />
+                    <a
+                      href="/otp-login"
+                      class="text-secondary"
+                      style="width: fit-content; text-decoration: none;"
+                    >Login using phone number</a>
                   </div>
                 </div>
-              </form>
-            </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-    </section>
-    <!--== End My Account Area Wrapper ==-->
-  </main>
+    </div>
+  </section>
+  <!--== End My Account Area Wrapper ==-->
+</main>
 
-  
 <script>
   var emailError = document.getElementById('email-error'); 
   var passwordError = document.getElementById('password-error');

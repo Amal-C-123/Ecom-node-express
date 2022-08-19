@@ -128,4 +128,23 @@ module.exports = {
         });
     });
   },
+
+  changeOrderStatus: (orderId) => {
+    return new Promise(async (resolve, reject) => {
+      let Order = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .updateOne(
+          { _id: objectId(orderId) },
+          {
+            $set: {
+              status: "cancelled",
+            },
+          }
+        )
+        .then((data) => {
+          resolve(data);
+        });
+    });
+  },
 };

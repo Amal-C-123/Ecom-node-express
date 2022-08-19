@@ -8,6 +8,7 @@ const store = require("../multer/multer");
 
 
 
+
 let userName = "admin";
 let pin = "12345";
 
@@ -67,7 +68,9 @@ router.get("/Block-user/:id", verifyLogin, (req, res) => {
     req.session.user = null;
     req.session.loggedIn = null;
     res.redirect("/admin/view-users");
-  });
+  }).catch(()=>{
+    res.render('admin/404',{admin:true})
+  })
 });
 
 router.get("/Un-Block-user/:id", verifyLogin, (req, res) => {
@@ -81,13 +84,13 @@ router.get("/Un-Block-user/:id", verifyLogin, (req, res) => {
 
 //products
 // view-products
-router.get("/view-products", (req, res) => {
+router.get("/view-products",verifyLogin, (req, res) => {
   itemHelpers.getAllProducts().then((products) => {
     res.render("admin/view-products", { admin: true, products });
   });
 });
 
-router.get("/add-products", (req, res) => {
+router.get("/add-products",verifyLogin, (req, res) => {
   itemHelpers.getCategories().then((categories) => {
     res.render("admin/add-products", { admin: true, categories });
   });
@@ -103,14 +106,19 @@ router.get("/product-delete/:id", verifyLogin, (req, res) => {
 
 //edit-product
 router.get("/edit-product/:id", verifyLogin, async (req, res) => {
-  let editProductFormData = await itemHelpers.getProductData(req.params.id);
-  console.log(editProductFormData);
-  let categories = await itemHelpers.getCategories();
-  res.render("admin/edit-product", {
-    editProductFormData,
-    categories,
-    admin: true,
-  });
+  try{
+    let editProductFormData = await itemHelpers.getProductData(req.params.id);
+    console.log(editProductFormData);
+    let categories = await itemHelpers.getCategories();
+    res.render("admin/edit-product", {
+      editProductFormData,
+      categories,
+      admin: true,
+    })
+  } catch{
+    res.render('admin/404',{admin:true})
+  }
+  
 });
 
 //edit-productdata post
@@ -125,7 +133,7 @@ router.post("/product-edit/:id", verifyLogin, async (req, res) => {
   });
 });
 
-router.post("/add-item", store.array("image", 4), (req, res) => {
+router.post("/add-item", store.array("image", 4), verifyLogin,(req, res) => {
   const files = req.files;
   if (!files) {
     const err = new Error("please choose the images");
@@ -165,7 +173,9 @@ router.post("/add-category", verifyLogin, (req, res) => {
 router.get("/edit-categories/:id", verifyLogin, (req, res) => {
   itemHelpers.getSingleCategory(req.params.id).then((category) => {
     res.render("admin/edit-category", {admin:true, category });
-  });
+  }).catch(()=>{
+    res.render('admin/404')
+  })
 });
 
 router.post("/edit-category/:id", (req, res) => {
@@ -179,9 +189,31 @@ router.get("/delete-category/:id", verifyLogin, (req, res) => {
   });
 });
 
+//orders
+router.get("/admin-orders", verifyLogin, (req, res) => {
+  itemHelpers.getOrders().then((Items) => {
+      res.render("admin/admin-orders", { admin: true,Items });
+ })
+});
+
+router.post("/change-order-status/:id", verifyLogin, (req, res) => {
+    itemHelpers.changeOrderStatus(req.params.id,req.body.status).then((response)=>{
+      res.json(response)
+    })
+});
+
+
+
 router.get("/logout", (req, res) => {
   req.session.users = null;
   res.redirect("/admin");
 });
+
+// /about/*  for page not found
+
+
+
+
+
 
 module.exports = router;
