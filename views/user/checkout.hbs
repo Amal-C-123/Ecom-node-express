@@ -121,6 +121,18 @@
             via razor pay
           </label>
         </div>
+        <div class="form-check m-2">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="PaymentMethod"
+            value="PayPal"
+            id="flexRadioDefault2"
+          />
+          <label class="form-check-label" for="flexRadioDefault2">
+            via PayPal
+          </label>
+        </div>
         
         <hr />
         <button type="submit" class="btn btn-theme btn-sm">Place Order</button>
@@ -128,3 +140,78 @@
     </div>
   </div>
 </div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script> 
+<script>
+  $("#check-out-form").submit((event) => {
+  event.preventDefault();
+  $.ajax({
+    url: "/checkout-form",
+    method: "post",
+    data: $("#check-out-form").serialize(),
+    success: (response) => {
+      if (response.cod) {
+        swal('Order placed successfully').then(()=>{
+          location.href = "/user-orders-list";
+        })
+      }else if(response.razorpay == true){
+          razorpayPayment(response)
+      }
+      
+    },
+  });
+});
+
+
+function razorpayPayment(order){
+  console.log(order)
+  var options = {
+    key: "rzp_test_8JdNiiJaGLJLpv", // Enter the Key ID generated from the Dashboard
+    amount: order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    currency: "INR",
+    name: "Cozmo",
+    description: "Test Transaction",
+    image: "https://example.com/your_logo",
+    order_id: order.id,  //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    handler: function (response){
+        
+        verifyPayment(response, order)
+    },
+    prefill: {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9999999999"
+    },
+    notes: {
+        "address": "Razorpay Corporate Office"
+    },
+    theme: {
+        "color": "#3399cc"
+    }
+};
+
+var rzp1 = new Razorpay(options);
+  rzp1.open();
+  
+}
+
+function verifyPayment(payment, order){
+  console.log('hiiiii')
+    $.ajax({
+      url: '/verify-payment', 
+      data: {
+        payment,
+        order
+      },
+      method: 'post',
+      success: (response)=>{
+        if (response.status){
+          location.href='/user-orders-list'
+        }else {
+          alert('payment failed')
+        }
+      }
+
+    })
+}
+
+</script>

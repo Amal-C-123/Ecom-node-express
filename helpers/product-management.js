@@ -109,11 +109,11 @@ module.exports = {
     });
   },
 
-  getProductData: (editProductId) => {
+  getProductData: (ProductId) => {
     return new Promise((resolve, reject) => {
       db.get()
         .collection(collection.PRODUCT_COLLECTIONS)
-        .findOne({ _id: objectId(editProductId) })
+        .findOne({ _id: objectId(ProductId) })
         .then((productData) => {
           resolve(productData);
         });
@@ -147,7 +147,7 @@ module.exports = {
       let Items = await db
         .get()
         .collection(collection.ORDER_COLLECTION)
-        .find()
+        .find().sort({date:-1})
         .toArray();
       resolve(Items);
     });

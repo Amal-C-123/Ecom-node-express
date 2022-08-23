@@ -24,7 +24,7 @@
                   {{#each products}}
                     <tr class="cart-product-item">
                       <td class="product-remove">
-                        {{!-- <a href="#/" onclick="deleteCartProduct()"><i class="fa fa-trash-o"></i></a> --}}
+                        <a href="#" onclick="deleteCartProduct('{{this.product._id}}', '{{this._id}}')"><i class="fa fa-trash-o"></i></a>
                       </td>
 
                       <td class="product-thumb">
@@ -33,15 +33,16 @@
                             src="/images/{{this.product.Image.[0]}}"
                             width="90"
                             height="110"
+                            style="border-radius: 15px;"
                             alt="Image-HasTech"
                           />
-                          <p style="color: black; font-size:0.8rem">{{this.product.name}}</p>
+                          <p style="color: black; font-size:0.8rem">{{this.product.description}}</p>
                         </a>
                       </td>
                       <td class="product-name">
                         <h4 class="title"><a
                             href="single-product.html"
-                          >{{this.product.description}}</a></h4>
+                          >{{this.product.name}}</a></h4>
                       </td>
                       <td class="product-price">
                         <span class="price">₹ {{this.product.price}}</span>
@@ -154,3 +155,24 @@
   </section>
   <!--== End Blog Area Wrapper ==-->
 </main>
+
+<script>
+    function deleteCartProduct(proId, cartId){
+      $.ajax({
+        url: '/delete-cart-product',
+        data: {
+          productId:proId,
+          cartId: cartId
+        },
+        method: 'post',
+        success: (response)=>{
+          swal('product removed from cart').then(()=>{
+            if(response.removeProduct){
+              location.reload()
+          }
+          })
+        }
+      })
+
+    }   
+</script>

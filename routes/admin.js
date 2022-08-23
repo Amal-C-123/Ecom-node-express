@@ -7,8 +7,6 @@ const itemHelpers = require("../helpers/product-management");
 const store = require("../multer/multer");
 
 
-
-
 let userName = "admin";
 let pin = "12345";
 
@@ -42,7 +40,7 @@ router.post("/view-dashboard", (req, res) => {
   if (userName === Email && pin === Password) {
     req.session.check = true;
     req.session.users = {
-      userName,
+      userName
     };
     res.redirect("/admin/admin-dashboard");
   } else {
@@ -57,8 +55,8 @@ router.get("/admin-dashboard", verifyLogin, (req, res) => {
 
 //users
 router.get("/view-users", verifyLogin, (req, res) => {
-  productHelpers.getAlluser().then((products) => {
-    res.render("admin/view-users", { admin: true, products });
+  productHelpers.getAlluser().then((users) => {
+    res.render("admin/view-users", { admin: true, users });
   });
 });
 
@@ -135,19 +133,18 @@ router.post("/product-edit/:id", verifyLogin, async (req, res) => {
 
 router.post("/add-item", store.array("image", 4), verifyLogin,(req, res) => {
   const files = req.files;
-  if (!files) {
-    const err = new Error("please choose the images");
-    res.redirect("/add-products", err);
-  }
-  //res.render("admin/add-products", { admin: true });
+  // if (!files) {
+  //   const err = new Error("please choose the images");
+  //   res.redirect("/add-products", err);
+  // }
+  
   var filenames = req.files.map(function (file) {
     return file.filename;
   });
 
   req.body.Image = filenames;
   itemHelpers.addItem(req.body).then((resolve) => {
-    console.log(req.body);
-    res.redirect("/admin/add-products");
+    res.redirect("/admin/view-products");
   });
 });
 

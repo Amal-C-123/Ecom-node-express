@@ -1,66 +1,108 @@
 <div class="content-page">
-            <!-- Start content -->
-            <div class="content">
-                <div class="container-fluid">
-                    
-                    <!-- START ROW -->
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h4 class="mt-0 header-title mb-4">Users</h4>
-                                    <div class="table-responsive">
-                                        <table class="table table-hover ">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Name</th>
-                                                    <th scope="col">Email</th>
-                                                    <th scope="col">Phone</th>
-                                                    <th scope="col">Status</th>
-                                                    <th scope="col">Action</th>
+  <!-- Start content -->
+  <div class="content">
+    <div class="container-fluid">
 
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {{#each products}}
-                                                <tr>
-                                                    <td> {{this.username}} </td>
-                                                    <td>{{this.Email}} </td>
-                                                    <td>{{this.Phone}} </td>
-                                                    {{#if this.block}}
-                                                    <td><p style="color: red;">Blocked</p> </td>
-                                                    <td><a href="/admin/Un-Block-user/{{this._id}}" id="unblockUser" onclick=" unblockAlert('{{this.username}}')" class="btn btn-danger btn-md">UnBlock</a></td>
-                                                    {{else}}
-                                                    <td><p style="color: rgb(23, 209, 23);">Active</p> </td>
-                                                    <td><a href="/admin/Block-user/{{this._id}}" class="btn btn-primary btn-md">Block</a></td>
-                                                    {{/if}}
-                                                </tr>
-                                              {{/each}}  
-                                            </tbody>
-                                        </table>
-                                    </div>
+      <!-- START ROW -->
+      <div class="row">
+        <div class="col-xl-12">
+          <div class="card m-b-30">
+            <div class="card-body">
+              <h4 class="mt-0 header-title mb-4">Users</h4>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Phone</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Action</th>
 
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <!-- END ROW -->
-
-                </div>
-                <!-- container-fluid -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{#each users}}
+                      <tr>
+                        <td> {{this.username}} </td>
+                        <td>{{this.Email}} </td>
+                        <td>{{this.Phone}} </td>
+                        {{#if this.block}}
+                          <td><p style="color: red;">Blocked</p> </td>
+                          <td><button
+                              
+                              id="unblockUser"
+                              onclick=" unblockUser('{{this._id}}', '{{this.username}}')"
+                              class="btn btn-danger btn-md"
+                            >UnBlock</button></td>
+                        {{else}}
+                          <td><p style="color: rgb(23, 209, 23);">Active</p>
+                          </td>
+                          <td><button
+                              onclick="blockUser('{{this._id}}', '{{this.username}}')"
+                              class="btn btn-primary btn-md"
+                            >Block</button></td>
+                        {{/if}}
+                      </tr>
+                    {{/each}}
+                  </tbody>
+                </table>
+              </div>
 
             </div>
-            <!-- content -->
+          </div>
+        </div>
 
-            <footer class="footer">
-            <span class="d-none d-sm-inline-block"> Cozmo Admin Panel   </span>
-            </footer>
+      </div>
+      <!-- END ROW -->
 
-        </div><script>
-    function unblockAlert(msg) {
-  swal(`Do you want to unblock ${msg}`).then(() => {
-    location.reload();
-  });
-}
-  </script>
+    </div>
+    <!-- container-fluid -->
+
+  </div>
+  <!-- content -->
+
+  <footer class="footer">
+    <span class="d-none d-sm-inline-block"> Cozmo Admin Panel </span>
+  </footer>
+
+</div>
+
+<script>
+  function unblockUser(userId,userName){
+    console.log(userId)
+    swal({text: 'Do you want to unblock '+userName ,
+     buttons: true}).then((block)=>{
+             if(block){
+                $.ajax({
+        url: '/admin/Un-Block-user/' + userId,
+        method: 'get',
+        success: (response)=>{
+            location.reload();
+        }
+    })
+             }
+             
+    })
+   
+
+  }
+  function blockUser(userId,userName){
+    console.log(userId)
+    swal({text: 'Do you want to block '+userName ,
+    dangerMode: true, buttons: true}).then((block)=>{
+             if(block){
+                $.ajax({
+        url: '/admin/Block-user/' + userId,
+        method: 'get',
+        success: (response)=>{
+            location.reload();
+        }
+    })
+             }
+             
+    })
+   
+
+  }
+</script>

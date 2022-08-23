@@ -12,7 +12,7 @@ module.exports = {
   //         callback(data)
   //     })
   // },
-  getAlluser: (prodId) => {
+  getAlluser: () => {
     return new Promise(async (resolve, reject) => {
       let user = await db
         .get()
