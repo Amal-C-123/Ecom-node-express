@@ -1,5 +1,6 @@
 var express = require("express");
 const session = require("express-session");
+const paypal = require('paypal-rest-sdk') 
 require("dotenv").config();
 var router = express.Router();
 const userHelpers = require("../helpers/user-helpers");
@@ -237,6 +238,7 @@ router.post("/checkout-form", verifyLogin, async (req, res) => {
   let userId = req.session.user._id;
   let products = await cartHelpers.getCartProductList(req.body.userId);
   let totalPrice = await cartHelpers.getTotalAmount(req.body.userId);
+  req.session.total= totalPrice
   userHelpers.placeOrder(req.body, products, totalPrice).then((response) => {
     req.session.orderId = response.insertedId.toString();
     if (req.body["PaymentMethod"] == "COD") {
@@ -249,17 +251,23 @@ router.post("/checkout-form", verifyLogin, async (req, res) => {
             // console.log(order)
             order.razorpay = true;
             res.json(order);
+          })
+      })
+    } else if(req.body["PaymentMethod"] == "PayPal"){
+        cartHelpers.getOrderId(userId).then((orderDetails)=>{
+          userHelpers
+          .generatePayPal(orderDetails._id.toString(), totalPrice)
+          .then((data) => {
+            res.json(data);
           });
-      });
+        })
     }
   });
 });
 
 router.post("/verify-payment", verifyLogin, (req, res) => {
   userHelpers.verifyPayment(req.body).then(() => {
-    console.log(req.body);
       userHelpers.changePaymentStatus(req.body["order[receipt]"]).then(()=>{
-        console.log('payment success');
         res.json({status: true}) 
       }).catch((err)=>{
         console.log(err);
@@ -267,5 +275,42 @@ router.post("/verify-payment", verifyLogin, (req, res) => {
       })
   });
 });
+
+//paypal
+router.get("/success", verifyLogin, (req, res) => {
+  let amount = req.session.total;
+  let orderIdPaypal = req.session.orderId;
+  userHelpers.changePaymentStatus(orderIdPaypal).then(() => {
+    const payerId = req.query.PayerID;
+    const paymentId = req.query.paymentId;
+    console.log(payerId);
+    const execute_payment_json = {
+      payer_id: payerId,
+      transactions: [
+        {
+          amount: {
+            currency: "USD",
+            total: amount,
+          },
+        },
+      ],
+    };
+    
+    paypal.payment.execute(
+      paymentId,
+      execute_payment_json,
+      function (error, payment) {
+        if (error) {
+          console.log(error.response);
+          throw error;
+        } else {
+          console.log(JSON.stringify(payment));
+          res.redirect("/user-orders-list");
+        }
+      }
+    );
+  });
+});
+
 
 module.exports = router;

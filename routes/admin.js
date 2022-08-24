@@ -114,7 +114,7 @@ router.get("/edit-product/:id", verifyLogin, async (req, res) => {
       admin: true,
     })
   } catch{
-    res.render('admin/404',{admin:true})
+    res.render('admin/404')
   }
   
 });

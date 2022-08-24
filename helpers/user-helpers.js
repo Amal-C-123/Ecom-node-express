@@ -4,10 +4,17 @@ const bcrypt = require("bcrypt");
 var objectId = require("mongodb").ObjectId;
 require("dotenv").config();
 const RazorPay = require("razorpay");
+const paypal = require('paypal-rest-sdk') 
 
 var instance = new RazorPay({
   key_id: process.env.KEY_ID,
   key_secret: process.env.KEY_SECRET,
+});
+
+paypal.configure({
+  mode: "sandbox",
+  client_id: process.env.CLIENT_ID,
+  client_secret: process.env.CLIENT_SECRET,
 });
 
 module.exports = {
@@ -217,6 +224,51 @@ module.exports = {
         }
       );
     });
+  },
+
+  generatePayPal: (orderId, totalPrice) => {
+    
+    let price = totalPrice.toString()
+   return new Promise((resolve, reject) => {
+     const create_payment_json = {
+       "intent": "sale",
+       "payer": {
+         "payment_method": "paypal",
+       },
+       "redirect_urls": {
+         "return_url": "http://localhost:3000/success",
+         "cancel_url": "http://localhost:3000/cancel",
+       },
+       "transactions": [
+         {
+           "item_list": {
+             "items": [
+               {
+                 "name": "Red Sox Hat",
+                 "sku": "001",
+                 "price": totalPrice,
+                 "currency": "USD",
+                 "quantity": 1,
+               },
+             ],
+           },
+           "amount": {
+             "currency": "USD",
+             "total": totalPrice,
+           },
+           "description": "Hat for the best team ever",
+         },
+       ],
+     };
+
+     paypal.payment.create(create_payment_json, function (error, payment) {
+       if (error) {
+         throw error;
+       } else {
+         resolve(payment);
+       }
+     });
+   });
   },
 
   verifyPayment: (details) => {

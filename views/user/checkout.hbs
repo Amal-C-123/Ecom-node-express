@@ -155,6 +155,12 @@
         })
       }else if(response.razorpay == true){
           razorpayPayment(response)
+      }else if (response.payer.payment_method = 'paypal'){
+           for (let i = 0; i < response.links.length; i++) {
+          if (response.links[i].rel === "approval_url") {
+            location.href = response.links[i].href;
+          }
+        }
       }
       
     },
