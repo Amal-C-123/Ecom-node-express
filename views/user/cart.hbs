@@ -6,48 +6,33 @@
           <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <div class="shopping-cart-form table-responsive">
+          <div class=" table-responsive">
             
-              <table class="table text-center">
+              <table class="table text-center ">
                 <thead>
                   <tr>
-                    <th class="product-remove">&nbsp;</th>
-                    <th class="product-thumb">&nbsp;</th>
-                    <th class="product-name">Product</th>
-                    <th class="product-price">Price</th>
-                    <th class="product-quantity">Quantity</th>
-                    {{!-- <th class="product-subtotal">Total</th> --}}
+                      <th class="product-name" >Product</th>  
+                      <th class="product-price">Name</th>
+                      <th class="product-quantity">Price</th>
+                      <th class="product-subtotal">Quantity</th>
+                      <th class="product-subtotal">Action</th>
                   </tr>
                 </thead>
-                <tbody>
-
+                <tbody >
                   {{#each products}}
-                    <tr class="cart-product-item">
-                      <td class="product-remove">
-                        <a href="#" onclick="deleteCartProduct('{{this.product._id}}', '{{this._id}}')"><i class="fa fa-trash-o"></i></a>
-                      </td>
-
+                      <tr class="cart-product-item">
+                      
                       <td class="product-thumb">
-                        <a href="/#">
-                          <img
-                            src="/images/{{this.product.Image.[0]}}"
-                            width="90"
-                            height="110"
-                            style="border-radius: 15px;"
-                            alt="Image-HasTech"
-                          />
-                          <p style="color: black; font-size:0.8rem">{{this.product.description}}</p>
+                        <a href="single-product.html">
+                          <img src="/images/{{this.product.Image.[0]}}" class="imgWidth" width="90" height="110" alt="Image-HasTech">
                         </a>
                       </td>
                       <td class="product-name">
-                        <h4 class="title"><a
-                            href="single-product.html"
-                          >{{this.product.name}}</a></h4>
+                        <p class="title "><a href="single-product.html"  style="font-size:1rem; color:black">{{this.product.name}}</a></p>
                       </td>
                       <td class="product-price">
                         <span class="price">₹ {{this.product.price}}</span>
                       </td>
-
                       <td class="product-quantity">
                         <button
                           style="border:none; margin-right:5px"
@@ -62,23 +47,20 @@
                         >+</button>
                       </td>
 
+                      <td class="product-remove">
+                        <a href="#" onclick="deleteCartProduct('{{this.product._id}}', '{{this._id}}')"><i class="fa fa-trash-o"></i></a>
+                      </td>
+                      
                     </tr>
                   {{/each}}
-
-                    {{! <tr class="actions">
-                      <td class="border-0" colspan="6">
-                        <button type="submit" class="update-cart" disabled>Update cart</button>
-                        <button type="submit" class="clear-cart">Clear Cart</button>
-                        <a href="shop.html" class="btn-theme btn-flat">Continue Shopping</a>
-                      </td>
-                    </tr> }}
+ 
                 </tbody>
               </table>
             
           </div>
         </div>
       </div>
-      <div class="row row-gutter-50">
+      <div class="row row-gutter-50 table-responsive mt-4">
         
         <div class="col-md-6 col-lg-4">
           <div class="shipping-form-coupon">

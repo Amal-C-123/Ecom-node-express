@@ -67,16 +67,15 @@
                   <div class="shopping-search">
                     <button class="shopping-search-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#AsideOffcanvasSearch" aria-controls="AsideOffcanvasSearch"><i class="pe-7s-search icon"></i></button>
                   </div>
-                  <div class="shopping-wishlist">
+                  {{!-- <div class="shopping-wishlist">
                     <a class="shopping-wishlist-btn" href="shop-wishlist.html">
                       <i class="pe-7s-like icon"></i>
                     </a>
-                  </div>
+                  </div> --}}
                   <div class="shopping-cart">
                     <button class="shopping-cart-btn" type="button"  data-bs-target="#AsideOffcanvasCart" aria-controls="offcanvasRightLabel">
                       <a href="/cart"><i class="pe-7s-shopbag icon"></i>
                       {{#if user}}
-                          {{!-- <sup class="shop-count">02 {{cartCount}}</sup> --}}
                           <span class="shop-count" id="cart-count">{{cartCount}}</span>
                           
                       {{/if}}
@@ -103,7 +102,7 @@
               <div class="header-navigation-area position-relative">
                 <ul class="main-menu nav">
                   <li ><a href="/"><span>Home</span></a></li>
-                  <li><a href="#/"><span>Products</span></a>
+                  <li><a href="/shop"><span>Products</span></a>
                   <li><a href="/user-orders-list"><span>Orders</span></a>
                   <li><a href="#"><span>Profile</span></a></li>
                   

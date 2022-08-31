@@ -3,6 +3,7 @@
     <section class="home-slider-area">
       <div class="swiper-container home-slider-container default-slider-container">
         <div class="swiper-wrapper home-slider-wrapper slider-default">
+          {{#each banner}}
           <div class="swiper-slide">
             <div class="slider-content-area" data-bg-img="/user-assets/img/shape/1.webp">
               <div class="container">
@@ -12,13 +13,13 @@
                       <div class="slider-content">
                         <div class="content">
                           <div class="title-box">
-                            <h2 class="title">Exclusive New Shoes</h2>
+                            <h2 class="title">{{this.text}}</h2>
                           </div>
                           <div class="desc-box">
-                            <p class="desc">Up To 30% Off All Shoes & Products</p>
+                            <p class="desc">{{this.description}}</p>
                           </div>
                           <div class="btn-box">
-                            <a class="btn-slider" href="shop.html">Shop Now</a>
+                            <a class="btn-slider" href="/shop">Shop Now</a>
                           </div>
                         </div>
                       </div>
@@ -26,7 +27,7 @@
                     <div class="col-sm-6 col-md-6">
                       <div class="slider-thumb">
                         <div class="thumb scene">
-                          <span class="scene-layer" data-depth=".3"><img src="/user-assets/img/slider-01.webp" width="461" height="489" alt="Image-HasTech"></span>
+                          <span class="scene-layer" data-depth=".3"><img src="/images/{{this.Images.[0]}}" width="461" height="489" alt="Image-HasTech"></span>
                         </div>
                         <div class="shape-group mousemove">
                           <div class="shape-group-one mousemove-layer" data-speed=".8" data-bg-img="user-assets/img/shape/2.webp"></div>
@@ -37,46 +38,10 @@
                   </div>
                 </div>
               </div>
-              <h2 class="slider-text-shape">NEW 2021</h2>
-            </div>
-          </div>
-          <div class="swiper-slide">
-            <div class="slider-content-area" data-bg-img="/user-assets/img/shape/1.webp">
-              <div class="container">
-                <div class="slider-container">
-                  <div class="row justify-content-between align-items-center">
-                    <div class="col-sm-6 col-md-5">
-                      <div class="slider-content">
-                        <div class="content">
-                          <div class="title-box">
-                            <h2 class="title">Exclusive New Shoes</h2>
-                          </div>
-                          <div class="desc-box">
-                            <p class="desc">Up To 30% Off All Shoes & Products</p>
-                          </div>
-                          <div class="btn-box">
-                            <a class="btn-slider" href="shop.html">Shop Now</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-sm-6 col-md-6">
-                      <div class="slider-thumb">
-                        <div class="thumb scene">
-                          <span class="scene-layer" data-depth=".3"><img src="/user-assets/img/slider-03.webp" width="548" height="649" alt="Image-HasTech"></span>
-                        </div>
-                        <div class="shape-group mousemove">
-                          <div class="shape-group-one mousemove-layer" data-speed=".8" data-bg-img="/user-assets/img/shape/2.webp"></div>
-                          <div class="shape-group-two scene"><span class="scene-layer" data-depth=".6"><img src="user-assets/img/shape/3.webp" width="471" height="462" alt="Image-HasTech"></span></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
               <h2 class="slider-text-shape">NEW 2022</h2>
             </div>
           </div>
+          {{/each}}
         </div>
 
         <!--== Add Swiper Arrows ==-->
@@ -92,11 +57,65 @@
     </section>
     <!--== End Hero Area Wrapper ==-->
 
-    
+    <!--== Start Product Collection Area Wrapper ==-->
+    <section class="product-area product-collection-area">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 col-md-6">
+            <!--== Start Product Collection Item ==-->
+            <div class="product-collection">
+              <div class="inner-content">
+                <div class="product-collection-content">
+                  <div class="content">
+                    <h3 class="title"><a href="/mens-shoes">{{categories.0.category}}</a></h3>  
+                  </div>
+                </div>
+                <div class="product-collection-thumb" data-bg-img="/images/category-imgs/mens.png"></div>
+                <a class="banner-link-overlay" href="/show-products/{{categories.0._id}}"></a>
+              </div>
+            </div>
+            <!--== End Product Collection Item ==-->
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <!--== Start Product Collection Item ==-->
+            <div class="product-collection">
+              <div class="inner-content">
+                <div class="product-collection-content">
+                  <div class="content">
+                    <h3 class="title"><a href="/women-shoes">{{categories.1.category}}</a></h3>
+                    {{!-- <h4 class="price">From $90.00</h4> --}}
+                  </div>
+                </div>
+                <div class="product-collection-thumb" data-bg-img="/images/category-imgs/women.jpg"></div>
+                <a class="banner-link-overlay" href="/show-products/{{categories.1._id}}"></a>
+              </div>
+            </div>
+            <!--== End Product Collection Item ==-->
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <!--== Start Product Collection Item ==-->
+            <div class="product-collection">
+              <div class="inner-content">
+                <div class="product-collection-content">
+                  <div class="content">
+                    <h3 class="title"><a href="/kids-shoes">{{categories.2.category}}</a></h3>
+
+                  </div>
+                </div>
+                <div class="product-collection-thumb" data-bg-img="/images/category-imgs/kids.webp"></div>
+                <a class="banner-link-overlay" href="/show-products/{{categories.2._id}}"></a>
+              </div>
+            </div>
+            <!--== End Product Collection Item ==-->
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--== End Product Collection Area Wrapper ==-->
 
     <!--== Start Product Area Wrapper ==-->
     <section class="product-area product-default-area">
-      <div class="container pt--1">
+      <div class="container ">
         <div class="row">
           <div class="col-12">
             <div class="section-title text-center">
@@ -120,19 +139,20 @@
                   </a>
                 
                   <div class="product-action">
-                    <a class="btn-product-wishlist" href="shop-wishlist.html"><i class="fa fa-heart"></i></a>
+                    {{!-- <a class="btn-product-wishlist" href="shop-wishlist.html"><i class="fa fa-heart"></i></a> --}}
                     <button class="btn-product-cart" onclick="addToCart('{{this._id}}')" ><i class="fa fa-shopping-cart"></i></button>
                     
                   </div>
                   <a class="banner-link-overlay" href="shop.html"></a>
                 </div>
-                <div class="product-info">
+                <div class="product-info p-2 mt-0">
+                  <h4 class="title mb-1"><a href="#">{{this.name}}</a></h4>
                   <div class="category">
                     <ul>
-                      <li><a href="#">{{this.category}}</a></li>
+                      <li><a href="#">{{this.description}}</a></li>
                     </ul>
                   </div>
-                  <h4 class="title"><a href="#">{{this.name}}</a></h4>
+                  
                   <div class="price">
                     <span class="price">₹ {{this.price}}</span>
                   </div>

@@ -1,0 +1,87 @@
+<main class="main-content">
+    
+
+    <!--== Start Product Area Wrapper ==-->
+    <section class="product-area product-default-area">
+      <div class="container">
+        <div class="row flex-xl-row-reverse justify-content-between">
+          <div class="col-xl-9">
+            <div class="row">
+              
+              <div class="col-12">
+                <div class="tab-content" id="nav-tabContent">
+                  <div class="tab-pane fade show active" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
+                    <div class="row">
+                      {{#each products}}
+                       <div class="col-sm-6 col-lg-4">
+                          <!--== Start Product Item ==-->
+                          <div class="product-item">
+                            <div class="inner-content">
+                              <div class="product-thumb">
+                                <a href="/view-product/{{this._id}}">
+                                  <img src="/images/{{this.Image.[0]}}" width="270" height="274" style="width: 270px; height:274px" alt="Image-HasTech">
+                                </a>
+                              
+                                <div class="product-action">
+                                  {{!-- <a class="btn-product-wishlist" href="shop-wishlist.html"><i class="fa fa-heart"></i></a> --}}
+                                  <button class="btn-product-cart" onclick="addToCart('{{this._id}}')" ><i class="fa fa-shopping-cart"></i></button>
+                                  
+                                </div>
+                                <a class="banner-link-overlay" href="shop.html"></a>
+                              </div>
+                              <div class="product-info p-2 mt-0">
+                                <h4 class="title mb-1"><a href="#">{{this.name}}</a></h4>
+                                <div class="category">
+                                  <ul>
+                                    <li><a href="#">{{this.description}}</a></li>
+                                  </ul>
+                                </div>
+                                
+                                <div class="price">
+                                  <span class="price">₹ {{this.price}}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!--== End prPduct Item ==-->
+                        </div>
+                      {{/each}}
+
+                      <div class="col-12">
+                        {{!-- <div class="pagination-items">
+                          <ul class="pagination justify-content-end mb--0">
+                            <li><a class="active" href="shop.html">1</a></li>
+                            <li><a href="shop-four-columns.html">2</a></li>
+                            <li><a href="shop-three-columns.html">3</a></li>
+                          </ul>                    
+                        </div> --}}
+                      </div>
+                    </div>
+                  </div>
+
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-3">
+            <div class="shop-sidebar">
+              <div class="shop-sidebar-category">
+                <h4 class="sidebar-title">Categories</h4>
+                <div class="sidebar-category">
+                  <ul class="category-list mb--0">
+                    {{#each categories}}
+                    <li><a href="/show-products/{{this._id}}">{{this.category}} </a></li>
+                    {{/each}}
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--== End Product Area Wrapper ==-->
+  </main>

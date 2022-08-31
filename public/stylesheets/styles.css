@@ -1,0 +1,10 @@
+.imgWidth{
+    width: 5rem;
+    height: 5rem;
+    border-radius: 25px;
+}
+.table-responsive{   /*cart table*/
+    width: 91%;
+    margin: 0 auto;
+}
+

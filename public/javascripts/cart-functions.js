@@ -49,28 +49,5 @@ function changeQuantity(cartId, proId, count, dummy) {
   });
 }
 
-function cancelOrder(orderId) {
-   swal({
-    text:'Are you sure cancel this order',
-    // buttons: true,
-    // dangerMode: true
-   }).then((willCancel)=>{
-    if(willCancel){
-      $.ajax({
-        url: "/user-cancel-order",
-        data: {
-          order:orderId
-        },
-        method: "post",
-        success: (response) => {
-          if (response.acknowledged) {
-            location.reload();
-          }
-        },
-      })
-    }
-    
-   })
-  }
 
 

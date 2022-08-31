@@ -10,7 +10,7 @@
             <div class="card-body">
               <h4 class="mt-0 header-title mb-4">User Orders</h4>
               <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover text-center">
                   <thead>
                     <tr>
                       <th scope="col">Date</th>
@@ -18,7 +18,7 @@
                       <th scope="col">Payment Method</th>
                       <th scope="col">Status</th>
                       <th scope="col">Amount</th>
-                      <th scope="col">Change Status</th>
+                      <th scope="col">Action</th>
 
                     </tr>
                   </thead>
@@ -26,29 +26,29 @@
                     {{#each Items}}
                       <tr>
                         <td> {{this.date}} </td>
-                        <td>{{this.deliveryDetails.address}}
-                          <br />{{this.deliveryDetails.city}}
-                          <br />
-                          {{this.deliveryDetails.country}}
+                        <td>{{this.address.address}}
+                          <br />{{this.address.state}},
+                          {{this.address.pincode}}
                         </td>
                         <td>{{this.paymentMethod}} </td>
-                        <td>{{this.status}} </td>
+                        <td>{{this.paymentstatus}} </td>
                         <td
                           data-order="1000"
-                        >₹ {{this.deliveryDetails.totalAmount}}</td>
+                        >₹ {{this.totalAmount}}</td>
                         <td data-order="1000">
-                          <button
-                            onclick="changeOrderStatus('{{this._id}}','pending')"
-                            class="btn btn-sm btn-primary"
-                          >Pending</button>
-                          <button
-                            onclick="changeOrderStatus('{{this._id}}','delivered')"
-                            class="btn  btn-sm btn-primary"
-                          >Delivered</button> <br>  
-                          <button
-                            onclick="changeOrderStatus('{{this._id}}','cancelled')"
-                            class="btn  btn-sm btn-danger mt-1"
-                          >Cancel</button>
+                          <div class="d-flex justify-content-end">
+                           <div class="dropdown">
+                              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Change Status
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item " href="#"onclick="changeOrderStatus('{{this._id}}','pending')" >Pending</a>
+                                <a class="dropdown-item" href="#"  onclick="changeOrderStatus('{{this._id}}','delivered')">Delivered</a>
+                                <a class="dropdown-item" href="#"  onclick="changeOrderStatus('{{this._id}}','cancelled')">Cancel</a>
+                              </div>
+                            </div>   
+                           <a class="btn btn-primary btn-sm" href="/admin/view-order/{{this._id}}" style="width: fit-content; margin-left:5px">view Details</a>
+                          </div>
                         </td>
                       </tr>
                     {{/each}}

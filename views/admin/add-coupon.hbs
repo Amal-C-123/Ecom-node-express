@@ -1,0 +1,40 @@
+<div class="content-page">
+  <!-- Start content -->
+  <div class="content">
+    <div class="container-fluid">
+
+      <div class="   mt-4">
+        <div class="row">
+            <div class="col-md-6 ml-5 m-auto">
+                <h2 class="text-center">Add Coupon</h2>
+                <form action="/admin/add-coupon" method="post">
+                    <label>Coupon Name</label>
+                    <input type="text" name="couponname" class="form-control" required><br>
+                    <label>Start Date</label>
+                    <input type="date" name="startdate" class="form-control" required><br>
+                    <label>End Date</label>
+                    <input type="date" name="enddate" class="form-control" required><br>
+                    <label>Lower Cap</label>
+                    <input type="text" name="lowercap" class="form-control" required><br>
+                     <label>Upper Cap</label>
+                    <input type="text" name="uppercap" class="form-control" required><br>
+                     <label>Percentage</label>
+                    <input type="text" name="percentage" class="form-control" required>
+                    <button type="submit" class="btn btn-success mt-4">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <!-- container-fluid -->
+
+  </div>
+  <!-- content -->
+
+  <footer class="footer">
+    <span class="d-none d-sm-inline-block"> Cozmo Admin Panel </span>
+  </footer>
+
+</div>
+

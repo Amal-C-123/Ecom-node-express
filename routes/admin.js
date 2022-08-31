@@ -120,15 +120,19 @@ router.get("/edit-product/:id", verifyLogin, async (req, res) => {
 });
 
 //edit-productdata post
-router.post("/product-edit/:id", verifyLogin, async (req, res) => {
-  let editProductFormData = await itemHelpers.updateProduct(
+router.post("/product-edit/:id", store.array("image", 4),verifyLogin, async (req, res) => {
+  const files = req.files;
+  var filenames = req.files.map(function (file) {
+    return file.filename;
+  });
+  req.body.Image = filenames;
+  itemHelpers.updateProduct(
     req.params.id,
     req.body
-  );
-  res.render("admin/edit-product", {
-    editProductFormData,
-    admin: true,
-  });
+  ).then((response)=>{
+    res.redirect('/admin/view-products')
+  })
+ 
 });
 
 router.post("/add-item", store.array("image", 4), verifyLogin,(req, res) => {
@@ -143,7 +147,7 @@ router.post("/add-item", store.array("image", 4), verifyLogin,(req, res) => {
   });
 
   req.body.Image = filenames;
-  itemHelpers.addItem(req.body).then((resolve) => {
+  itemHelpers.addItem(req.body).then(() => {
     res.redirect("/admin/view-products");
   });
 });
@@ -156,15 +160,41 @@ router.get("/categories", verifyLogin, (req, res) => {
   });
 });
 
+router.get('/show-banner',verifyLogin,(req,res)=>{
+  itemHelpers.getAllBanner().then((banner)=>{
+    res.render('admin/banner',{admin:true, banner})
+  })
+})
+
+router.get('/add-banner',verifyLogin,(req,res)=>{
+  res.render('admin/add-banner',{admin:true}) 
+  })
+
+  router.post('/add-banner', store.array('Images'), (req, res) => {
+    var filenames = req.files.map(function (file) {
+      return file.filename;
+    });
+    req.body.Images = filenames;
+    itemHelpers.addBanner(req.body).then(()=> {
+      res.redirect('/admin/show-banner')
+    })
+  })
+  
+  router.get('/delete-banner/:id',verifyLogin, (req, res) => {
+    let banner = req.params.id
+    itemHelpers.deleteBanner(banner).then(() => {
+      res.redirect('/admin/show-banner')
+    })
+  })  
+
 router.get("/add-categories", verifyLogin, (req, res) => {
   res.render("admin/add-category", { admin: true });
 });
 
 router.post("/add-category", verifyLogin, (req, res) => {
   //let category = req.body;
-  console.log(req.body);
   itemHelpers.addCategory(req.body);
-  res.redirect("/admin/add-categories");
+  res.redirect("/admin/categories");
 });
 
 router.get("/edit-categories/:id", verifyLogin, (req, res) => {
@@ -199,7 +229,38 @@ router.post("/change-order-status/:id", verifyLogin, (req, res) => {
     })
 });
 
+router.get('/view-order/:id',verifyLogin, async(req, res)=>{
+  let order= await userHelpers.getOrderDetails(req.params.id);
+  userHelpers.getOrderedProducts(req.params.id).then((products)=>{
+    res.render('admin/order-details',{admin:true,order,products})
+  })
+  
+})
 
+//coupons section
+router.get('/show-coupon',verifyLogin, (req, res) => {
+  itemHelpers.getAllCoupon().then((coupon) => {
+    res.render('admin/show-coupon', { admin: true, coupon })
+  })
+})
+
+router.get('/add-coupon',verifyLogin, (req, res) => {
+  res.render('admin/add-coupon', { admin: true })
+})
+
+router.post('/add-coupon', (req, res) => {
+  console.log(req.body);
+  itemHelpers.addCoupon(req.body).then(() => {
+    res.redirect('/admin/show-coupon')
+  })
+})
+
+router.get('/delete-coupon/:id',verifyLogin, (req, res) => {
+  let couponId = req.params.id
+  itemHelpers.deleteCoupon(couponId).then(() => {
+    res.redirect('/admin/show-coupon')
+  })
+})
 
 router.get("/logout", (req, res) => {
   req.session.users = null;

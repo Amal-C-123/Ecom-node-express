@@ -4,8 +4,8 @@ const bcrypt = require("bcrypt");
 var objectId = require("mongodb").ObjectId;
 require("dotenv").config();
 const RazorPay = require("razorpay");
-const paypal = require('paypal-rest-sdk') 
-
+const paypal = require("paypal-rest-sdk");
+const CC = require("currency-converter-lt");
 var instance = new RazorPay({
   key_id: process.env.KEY_ID,
   key_secret: process.env.KEY_SECRET,
@@ -16,6 +16,7 @@ paypal.configure({
   client_id: process.env.CLIENT_ID,
   client_secret: process.env.CLIENT_SECRET,
 });
+
 
 module.exports = {
   doSignUp: (userData) => {
@@ -126,7 +127,6 @@ module.exports = {
   },
 
   unblockUser: (userId) => {
-    console.log(userId);
     return new Promise((resolve, reject) => {
       db.get()
         .collection(collection.USER_COLLECTION)
@@ -142,6 +142,94 @@ module.exports = {
     });
   },
 
+  // addAddress
+  addAdrress: (address, userId) => {
+    return new Promise(async (resolve, reject) => {
+      let Address = await db
+        .get()
+        .collection(collection.ADDRESS_COLLECTION)
+        .findOne({ _id: objectId(userId) });
+      console.log(Address);
+      if (Address) {
+        address.index = Address.addressList.length + 1;
+        db.get()
+          .collection(collection.ADDRESS_COLLECTION)
+          .updateOne(
+            { _id: objectId(userId) },
+            {
+              $push: { addressList: address },
+            }
+          )
+          .then(() => {
+            resolve();
+          });
+      } else {
+        address.index = 1;
+        db.get()
+          .collection(collection.ADDRESS_COLLECTION)
+          .insertOne({ _id: objectId(userId), addressList: [address] })
+          .then((response) => {
+            resolve(response);
+          });
+      }
+    });
+  },
+
+  getAddress: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      let address = await db
+        .get()
+        .collection(collection.ADDRESS_COLLECTION)
+        .aggregate([
+          {
+            $match: { _id: objectId(userId) },
+          },
+          {
+            $unwind: "$addressList",
+          },
+        ])
+        .toArray();
+      resolve(address);
+    });
+  },
+
+  getAddress_PlaceOrder: (userId, addressIndex) => {
+    return new Promise(async (resolve, reject) => {
+      let singleAddress = await db
+        .get()
+        .collection(collection.ADDRESS_COLLECTION)
+        .aggregate([
+          {
+            $match: { _id: objectId(userId) },
+          },
+          {
+            $unwind: "$addressList",
+          },
+          {
+            $match: { "addressList.index": addressIndex },
+          },
+        ])
+        .toArray();
+      console.log(singleAddress[0].addressList, "mmmm");
+      resolve(singleAddress[0].addressList);
+    });
+  },
+
+  priceConvert: (price) => {
+    return new Promise((resolve, reject) => {
+      let convertPrice = new CC({
+        from: "INR",
+        to: "USD",
+        amount: price,
+        isDecimalComma: false,
+      });
+      convertPrice.convert().then((response) => {
+        console.log(response);
+        resolve(response);
+      });
+    });
+  },
+
   changeOrderStatus: (orderId) => {
     return new Promise(async (resolve, reject) => {
       let Order = await db
@@ -151,7 +239,7 @@ module.exports = {
           { _id: objectId(orderId) },
           {
             $set: {
-              status: "cancelled",
+              paymentstatus: "cancelled", cancel: true
             },
           }
         )
@@ -160,33 +248,39 @@ module.exports = {
         });
     });
   },
-  placeOrder: (order, products, total) => {
-    return new Promise(async (resolve, reject) => {
-      let status = order.PaymentMethod === "COD" ? "placed" : "pending";
+
+
+  
+  placeOrder: (
+    orderedProducts,
+    deliveryAddress,
+    total,
+    paymentMethod,
+    userId
+  ) => {
+    console.log(total, "uuuuuuuuuuuuuuuuuuuuuuuuu");
+    return new Promise((resolve, reject) => {
+      let status = paymentMethod === "COD" ? "placed" : "pending";
       let orderObj = {
-        deliveryDetails: {
-          mobile: order.PhoneNumber,
-          address: order.Address,
-          pincode: order.Zipcode,
-          appartment: order.Apartment,
-          state: order.State,
-          country: order.Country,
-          totalAmount: total,
-        },
-        userId: objectId(order.userId),
-        paymentMethod: order.PaymentMethod,
-        products: products,
-        date: new Date().toUTCString(),
-        status: status,
+        userId: objectId(userId),
+        products: orderedProducts,
+        address: deliveryAddress,
+        totalAmount: total,
+        paymentstatus: status,
+        paymentMethod: paymentMethod,
+        date: new Date().toUTCString().slice(0, 25),
       };
+      console.log(orderObj);
       db.get()
         .collection(collection.ORDER_COLLECTION)
         .insertOne(orderObj)
-        .then((response) => {
+        .then((data) => {
           db.get()
             .collection(collection.CART_COLLECTION)
-            .deleteOne({ user: objectId(order.userId) });
-          resolve(response);
+            .deleteOne({ user: objectId(userId) })
+            .then(() => {
+              resolve(data);
+            });
         });
     });
   },
@@ -200,6 +294,59 @@ module.exports = {
         .sort({ date: -1 })
         .toArray();
       resolve(orders);
+    });
+  },
+
+  getOrderedProducts: (orderId) => {
+    return new Promise(async (resolve, reject) => {
+      let products = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: { _id: objectId(orderId) },
+          },
+          {
+            $unwind: "$products",
+          },
+          {
+            $project: {
+              item: "$products.item",
+              quantity: "$products.quantity",
+            },
+          },
+          {
+            $lookup: {
+              from: collection.PRODUCT_COLLECTIONS,
+              localField: "item",
+              foreignField: "_id",
+              as: "product",
+            },
+          },
+          {
+            $project: {
+              item: 1,
+              quantity: 1,
+              product: {
+                $arrayElemAt: ["$product", 0],
+              },
+            },
+          },
+        ])
+        .toArray();
+
+      resolve(products);
+    });
+  },
+
+  getOrderDetails: (orderId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.ORDER_COLLECTION)
+        .findOne({ _id: objectId(orderId) }).then((orderData)=>{
+          resolve(orderData)
+        })
+
     });
   },
 
@@ -227,48 +374,47 @@ module.exports = {
   },
 
   generatePayPal: (orderId, totalPrice) => {
-    
-    let price = totalPrice.toString()
-   return new Promise((resolve, reject) => {
-     const create_payment_json = {
-       "intent": "sale",
-       "payer": {
-         "payment_method": "paypal",
-       },
-       "redirect_urls": {
-         "return_url": "http://localhost:3000/success",
-         "cancel_url": "http://localhost:3000/cancel",
-       },
-       "transactions": [
-         {
-           "item_list": {
-             "items": [
-               {
-                 "name": "Red Sox Hat",
-                 "sku": "001",
-                 "price": totalPrice,
-                 "currency": "USD",
-                 "quantity": 1,
-               },
-             ],
-           },
-           "amount": {
-             "currency": "USD",
-             "total": totalPrice,
-           },
-           "description": "Hat for the best team ever",
-         },
-       ],
-     };
+    let price = totalPrice.toString();
+    return new Promise((resolve, reject) => {
+      const create_payment_json = {
+        intent: "sale",
+        payer: {
+          payment_method: "paypal",
+        },
+        redirect_urls: {
+          return_url: "http://localhost:3000/success",
+          cancel_url: "http://localhost:3000/cancel",
+        },
+        transactions: [
+          {
+            item_list: {
+              items: [
+                {
+                  name: "Red Sox Hat",
+                  sku: "001",
+                  price: totalPrice,
+                  currency: "USD",
+                  quantity: 1,
+                },
+              ],
+            },
+            amount: {
+              currency: "USD",
+              total: totalPrice,
+            },
+            description: "Hat for the best team ever",
+          },
+        ],
+      };
 
-     paypal.payment.create(create_payment_json, function (error, payment) {
-       if (error) {
-         throw error;
-       } else {
-         resolve(payment);
-       }
-     });
-   });
+      paypal.payment.create(create_payment_json, function (error, payment) {
+        if (error) {
+          throw error;
+        } else {
+          resolve(payment);
+        }
+      });
+    });
   },
 
   verifyPayment: (details) => {
@@ -291,6 +437,7 @@ module.exports = {
   },
 
   changePaymentStatus: (orderId) => {
+    console.log(orderId);
     return new Promise((resolve, reject) => {
       db.get()
         .collection(collection.ORDER_COLLECTION)
@@ -299,7 +446,7 @@ module.exports = {
             _id: objectId(orderId),
           },
           {
-            $set: { status: "placed" },
+            $set: { paymentstatus: "placed" },
           }
         )
         .then(() => {

@@ -110,7 +110,6 @@ module.exports = {
           // },
         ])
         .toArray();
-      // console.log(cartItems[0])
       resolve(cartItems);
     });
   },

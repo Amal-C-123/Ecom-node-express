@@ -56,7 +56,7 @@
                   </div>
                   <!--== End Product Thumbnail Area ==-->
                 </div>
-                <div class="col-xl-6">
+                <div class="col-xl-6 mt-5">
                   <!--== Start Product Info Area ==-->
                   <div class="product-single-info">
                     <h3 class="main-title">{{product.name}}</h3>
@@ -67,18 +67,14 @@
                     
                     <p> {{product.description}} </p>
                     
-                    <div class="product-quick-action">
-                      <div class="qty-wrap">
-                        <div class="pro-qty">
-                          <input type="text" title="Quantity" value="1">
-                        </div>
-                      </div>
+                    <div class=" mt-4">
+                     
                       <a class="btn-theme" href="#" onclick="addToCart('{{product._id}}')">Add to Cart</a>
                     </div>
-                    <div class="product-wishlist-compare">
+                    {{!-- <div class="product-wishlist-compare">
                       <a href="shop-wishlist.html"><i class="pe-7s-like"></i>Add to Wishlist</a>
                       
-                    </div>
+                    </div> --}}
                     <div class="product-info-footer">
                      
                     </div>

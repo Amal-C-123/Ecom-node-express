@@ -1,0 +1,64 @@
+<section class="h-100 gradient-custom ">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-lg-10 col-xl-11 " style="margin-left: 60px;">
+        <div class="card" style="border-radius: 10px;">
+          <div class="card-header px-4 py-4" style="margin-top: 1rem;">
+            <h5 class=" mb-0">Order Details</h5>
+          </div>
+          <div class="card-body p-2">
+
+            {{#each products}}
+            <div class="card shadow-0 border mb-4">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-2">
+                    <img src="/images/{{this.product.Image.[0]}}" class="img-fluid imgWidth" alt="Product img" >
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class=" mb-0">{{this.product.name}}</p>
+                  </div>
+                  <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
+                    <p class=" mb-0 ">{{this.product.description}}</p>
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class=" mb-0 ">₹ {{this.product.price}}</p>
+                  </div>
+                  
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class=" mb-0 ">Qty: {{this.quantity}}</p>
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="mb-0 small">{{this.product.Price}}</p>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+            {{/each}}
+            
+            <div class="d-flex justify-content-between mt-1 ">
+              <p class="fw-bold text-muted mb-0">Order Details</p>
+              <p class=" mb-0 text-muted"><span class="fw-bold me-4">Total</span> ₹ {{order.totalAmount}}.00</p>
+            </div>
+
+            <div class="d-flex justify-content-between pt-2">
+              <p class="text-muted mb-0">Username : {{order.address.username}}</p>
+              <p class="text-muted mb-0"><span class="fw-bold me-4">Discount</span> $00.00</p>
+            </div>
+
+            {{!-- <div class="d-flex justify-content-between">
+              <p class="text-muted mb-0">Invoice Date : {{this.deliveryDetails.date}}</p>
+              <p class="text-muted mb-0"><span class="fw-bold me-4">GST 18%</span> 123</p>
+            </div> --}}
+
+            {{!-- <div class="d-flex justify-content-between mb-5">
+              <p class="text-muted mb-0">Recepits Voucher : </p>
+              <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
+            </div> --}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

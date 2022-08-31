@@ -17,8 +17,61 @@ module.exports = {
         .get()
         .collection(collection.PRODUCT_COLLECTIONS)
         .find()
+        .limit(8)
         .toArray();
       resolve(products);
+    });
+  },
+
+  listAllProducts: () => {
+    return new Promise(async (resolve, reject) => {
+      let products = await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTIONS)
+        .find()
+        .toArray();
+      resolve(products);
+    });
+  },
+
+  
+
+  getAllBanner: () => {
+    return new Promise(async (resolve, reject) => {
+      let banner = await db
+        .get()
+        .collection(collection.BANNER_COLLECTION)
+        .find()
+        .toArray();
+      resolve(banner);
+    });
+  },
+
+  addBanner: (body) => {
+    return new Promise((resolve, reject) => {
+      let proObj = {
+        Name: body.Name,
+        text: body.bannerText,
+        description: body.description,
+        Images: body.Images,
+      };
+      db.get()
+        .collection(collection.BANNER_COLLECTION)
+        .insertOne(proObj)
+        .then(() => {
+          resolve();
+        });
+    });
+  },
+
+  deleteBanner: (bannerData) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.BANNER_COLLECTION)
+        .deleteOne({ _id: objectId(bannerData) })
+        .then(() => {
+          resolve();
+        });
     });
   },
 
@@ -31,6 +84,15 @@ module.exports = {
         .then((data) => {
           resolve(data.insertedId);
         });
+    });
+  },
+  //filter products according to category
+  categoryFilter: (categoryId) => {
+    return new Promise(async(resolve, reject) => {
+      let products= await db.get()
+        .collection(collection.PRODUCT_COLLECTIONS)
+        .find({ categoryId: objectId(categoryId) }).toArray()
+        resolve(products)
     });
   },
 
@@ -88,12 +150,18 @@ module.exports = {
   //ADD-PRODUCT
   addItem: (userData) => {
     return new Promise(async (resolve, reject) => {
-      db.get()
-        .collection(collection.PRODUCT_COLLECTIONS)
-        .insertOne(userData)
-        .then((data) => {
-          resolve(data.insertedId);
-        });
+      db.get().collection(collection.PRODUCT_COLLECTIONS).insertOne(userData);
+      let catId = await db
+        .get()
+        .collection(collection.PRODUCT_CATEGORY)
+        .findOne({ category: userData.category });
+      catId = catId._id;
+      if (catId) {
+        db.get()
+          .collection(collection.PRODUCT_COLLECTIONS)
+          .updateOne({ name: userData.name }, { $set: { categoryId: catId } });
+      }
+      resolve();
     });
   },
 
@@ -132,6 +200,7 @@ module.exports = {
               category: productDetails.category,
               description: productDetails.description,
               price: productDetails.price,
+              Image: productDetails.Image,
             },
           }
         )
@@ -147,7 +216,8 @@ module.exports = {
       let Items = await db
         .get()
         .collection(collection.ORDER_COLLECTION)
-        .find().sort({date:-1})
+        .find()
+        .sort({ date: -1 })
         .toArray();
       resolve(Items);
     });
@@ -162,11 +232,34 @@ module.exports = {
           { _id: objectId(orderId) },
           {
             $set: {
-              status: status,
+              paymentstatus: status,
             },
           }
-        )
-        resolve({statusChange: true})
+        );
+      resolve({ statusChange: true });
     });
   },
+
+  //coupons section
+  addCoupon: (couponData) => {
+    return new Promise((resolve, reject) => {
+        db.get().collection(collection.COUPON_COLLECTION).insertOne(couponData).then((data) => {
+            resolve(data.insertedId)
+        })
+    })
+},
+  
+getAllCoupon: () => {
+  return new Promise(async (resolve, reject) => {
+      let coupon = await db.get().collection(collection.COUPON_COLLECTION).find().toArray()
+      resolve(coupon)
+  })
+},
+
+deleteCoupon: (couponId) => {
+  return new Promise((resolve, reject) => {
+      db.get().collection(collection.COUPON_COLLECTION).deleteOne({ _id: objectId(couponId) })
+      resolve()
+  })
+},
 };
