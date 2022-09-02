@@ -216,6 +216,22 @@ router.get("/delete-category/:id", verifyLogin, (req, res) => {
   });
 });
 
+router.get('/category-offer',verifyLogin, async(req, res)=>{
+  let category= await itemHelpers.getCategories()
+    res.render('admin/category-offer', {admin:true, category})
+})
+
+router.get('/add-offer-category/:id',verifyLogin, (req, res)=>{
+      req.session.catId=req.params.id
+      res.render('admin/add-offer-category', {admin:true})
+})
+
+router.post('/add-offer-category',verifyLogin, (req, res)=>{
+    itemHelpers.addOfferCategory(req.body, req.session.catId).then(()=>{ 
+      res.redirect('/admin/category-offer')
+    })
+})
+
 //orders
 router.get("/admin-orders", verifyLogin, (req, res) => {
   itemHelpers.getOrders().then((Items) => {

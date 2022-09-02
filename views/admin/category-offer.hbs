@@ -1,0 +1,65 @@
+<div class="content-page">
+  <!-- Start content -->
+  <div class="content">
+    <div class="container-fluid">
+            <div class="row">
+    <div class="col-xl-12">
+        <div class="card m-b-30">
+            <div class="card-body">
+                <h4 class="mt-0 header-title mb-4 text-center">CATEGORY OFFER</h4>
+                <div class="table-responsive">
+                    <table id="datatable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Index</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Offer Name</th>
+                                <th scope="col">Offer Percentage</th>
+                                <th scope="col">Change Offer </th>
+                                <th scope="col">Offer Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each category}}
+                            <tr>
+                                <td>{{inc @index}}</td>
+                                <td>{{this.category}}</td>
+                                <td>{{this.offername}}</td>
+                                <td>{{this.percentage}}</td>
+                                 <td>
+                                    <div>
+                                            <a href="/admin/add-offer-category/{{this._id}}" class="btn btn-primary btn-sm">set offer</a>
+                                    </div>
+                                <td>
+                                    <div>
+                                        {{#if this.offer}}
+                                <button  class="btn btn-success btn-sm" onclick="offerDeactivate('{{this._id}}')">Active</button>
+                                            {{else}}
+                                <button  class="btn btn-danger btn-sm"  onclick="offerActivate('{{this._id}}')">Inactive</button>
+                                            {{/if}}
+                                    </div>
+                                </td>
+                               
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+      
+
+    </div>
+    <!-- container-fluid -->
+
+  </div>
+  <!-- content -->
+
+  <footer class="footer">
+    <span class="d-none d-sm-inline-block"> Cozmo Admin Panel </span>
+  </footer>
+
+</div>
+

@@ -70,14 +70,14 @@
                 <p>Enter your coupon code if you have one.</p>
               </div>
             </div>
-            <form action="#" method="">
+            <form id="coupon-form" >
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
                     <label for="couponCode" class="visually-hidden">Coupon Code</label>
                     <input
                       type="text"
-                      id="couponCode"
+                      name="coupon"
                       class="form-control"
                       placeholder="Enter your coupon code.."
                     />
@@ -99,17 +99,32 @@
             </div>
             <div class="cart-total-table">
               <table class="table">
-                <tbody>
-                  
+                <tfoot class="table-foot">
                   <tr class="order-total">
                     <td>
-                      <p class="value">Total</p>
+                      <p class="value">Cart Subtotal :</p>
                     </td>
                     <td>
                       <p class="price" id="total">₹ {{total}}</p>
                     </td>
                   </tr>
-                </tbody>
+                  <tr class="order-total">
+                    <td>
+                      <p class="value">Offer Discount :</p>
+                    </td>
+                    <td>
+                      <p class="price" id="offer-price">₹ 0</p>
+                    </td>
+                  </tr>
+                  <tr class="order-total">
+                    <td>
+                      <p class="value">Grand Total : </p>
+                    </td>
+                    <td>
+                      <p class="price" id="total-price">₹ {{total}}</p>
+                    </td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
             <a class="btn-theme btn-flat" href="/checkout">Proceed to
@@ -157,4 +172,42 @@
       })
 
     }   
+
+    $('#coupon-form').submit((e)=>{
+      e.preventDefault()
+      $.ajax({
+        url:'/coupon',
+        method: 'post',
+        data:$('#coupon-form').serialize(),
+        success: (amount) => {
+            console.log(amount)
+            if (amount.status) {
+                    swal("Success!", "Coupon Applied", "success").then(() => {
+                        document.getElementById('offer-price').innerHTML = amount.discountamount
+                        document.getElementById('total-price').innerHTML = amount.grandtotal
+                    })
+                } else if (amount.used) {
+                    swal("Info!", "Coupon already used!", "warning").then(() => {
+                        document.getElementById('offer-price').innerHTML = 0
+
+                    })
+                } else if (amount.expired) {
+                    swal("Info!", "Coupon Expired", "warning").then(() => {
+                        document.getElementById('offer-price').innerHTML = 0
+
+                    })
+                } else if (amount.small) {
+                    swal("Info!", "Total amount should be within 1000 and 5000 to apply coupon", "warning").then(() => {
+                        document.getElementById('offer-price').innerHTML = 0
+
+                    })
+                } else {
+                    swal("Oops!", "Coupon does not exist", "error").then(() => {
+                        document.getElementById('offer-price').innerHTML = 0
+
+                    })
+                }
+        }
+      })
+    })
 </script>

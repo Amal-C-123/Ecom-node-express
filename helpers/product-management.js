@@ -147,6 +147,19 @@ module.exports = {
     });
   },
 
+  addOfferCategory:(body, catId)=>{
+      return new Promise((resolve, reject)=>{
+          db.get().collection(collection.PRODUCT_CATEGORY)
+          .updateOne({_id: objectId(catId)}, {
+            $set:{
+              percentage: body.percentage,
+              offername: body.offername
+            }
+          })
+          resolve()
+      })
+  },
+
   //ADD-PRODUCT
   addItem: (userData) => {
     return new Promise(async (resolve, reject) => {

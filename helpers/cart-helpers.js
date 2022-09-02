@@ -192,6 +192,95 @@ module.exports = {
         })
     });
   },
+  couponCheck: (userId, body)=>{
+    let response = {}
+    return new Promise(async(resolve, reject)=>{
+      let couponcode = await db.get().collection(collection.COUPON_COLLECTION).findOne({ couponname: body.coupon })
+      console.log("couponcode", couponcode);
+      if(couponcode){
+        let user = await db.get().collection(collection.COUPON_COLLECTION).findOne({ couponname: body.coupon, user: objectId(userId) })
+        if(user){
+          response.coupon=false
+          response.usedcoupon = true
+          console.log('coupon already used');
+          resolve(response)
+        } else{
+          let currentDate = new Date()
+          let endDate = new Date(couponcode.enddate)
+          if(currentDate <= endDate){
+            let total = await db.get().collection(collection.CART_COLLECTION).aggregate([
+              {
+                $match: { user: objectId(userId) }
+              },
+              {
+                $unwind: '$products'
+              },
+              {
+                $project: {
+                  item: '$products.item',
+                  quantity: '$products.quantity'
+              }
+              },
+              {
+                $lookup: {
+                  from: collection.PRODUCT_COLLECTIONS,
+                  localField: 'item',
+                  foreignField: '_id',
+                  as: 'product'
+              }
+              },
+              {
+                $project: {
+                  item: 1, quantity: 1, product: { $arrayElemAt: ['$product', 0] }
+              }
+              },
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: { $multiply: [{ $toInt: '$quantity' }, { $toInt: '$product.price' }] } }
+              } 
+              }
+            ]).toArray()
+            console.log(total);
+            let total1 = total[0].total
+            if (total1 >= couponcode.lowercap && total1 <= couponcode.uppercap) {
+              response.discountamount = (couponcode.percentage * total1) / 100
+              response.grandtotal = total1 - response.discountamount
+              response.coupon = true
+              console.log("discount", response.discountamount);
+              console.log("grandtotal", response.grandtotal);
+              resolve(response)
+            } else{
+              response.small = true
+              resolve(response)
+            }
+          }else{
+            response.expired = true
+            console.log('coupon expired');
+            resolve(response)
+          }
+        } 
+      }else{
+        console.log('invalid coupon');
+                resolve(response)
+      }
+    })
+  },
+  userAppliedCoupon:(userId, coupon)=>{
+        return new Promise((resolve, reject)=>{
+          db.get().collection(collection.COUPON_COLLECTION).updateOne(
+            {
+              couponname: coupon
+            },
+            {
+              $push:{
+                  user: objectId(userId)
+              }
+            }
+          )
+          resolve()
+        })
+  },
 
   getTotalAmount: (userId) => {
     return new Promise(async (resolve, reject) => {

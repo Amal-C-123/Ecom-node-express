@@ -44,7 +44,6 @@ router.get("/", async function (req, res, next) {
   }
   let banner= await itemHelpers.getAllBanner()
   let categories= await productHelpers.getCategories()
-  console.log(categories);
   productHelpers.getAllProducts().then((products) => {
     res.render("index", { userHead: true, user, products, cartCount,banner,categories });
   });
@@ -243,6 +242,36 @@ router.get("/cart", verifyLogin, async (req, res) => {
   req.session.user.cartCount = cartCount;
 });
 
+router.post('/coupon', verifyLogin, async(req,res)=>{
+  req.session.couponData = req.body.coupon
+  let amount = {};
+  cartHelpers.couponCheck(req.session.user._id, req.body).then((response)=>{
+    if(response.coupon){
+      amount=response 
+      req.session.amount = amount
+      amount.status=true
+        res.json(amount)
+
+    }else if(response.usedcoupon){
+      console.log('coupon already used');
+      amount.used=true
+      res.json(amount)
+    }else if(response.small){
+      console.log('Not within Cap limits');
+      amount.small=true
+      res.json(amount)
+    }else if(response.expired){
+      console.log('Coupon expired');
+      amount.expired=true
+      res.json(amount)
+    }else{
+      console.log('coupon invalid');
+      amount.status=false
+      res.json(amount)
+    }
+  })
+})
+
 router.get("/add-to-cart/:id", verifyLogin, (req, res) => {
   cartHelpers.addToCart(req.params.id, req.session.user._id).then((data) => {
     res.json({ status: true });
@@ -294,15 +323,20 @@ router.post("/checkout", (req, res) => {
   res.redirect("/place-order");
 });
 
-router.get("/place-order", verifyLogin, (req, res) => {
+router.get("/place-order", verifyLogin, async(req, res) => {
   let cartCount =req.session.user?.cartCount;
-  cartHelpers.getTotalAmount(req.session.user._id).then((total) => {
+  console.log(req.session.amount);
+  let total = await cartHelpers.getTotalAmount(req.session.user._id)  
+  if(req.session.amount){
+    total = req.session.amount.grandtotal
+    
+  }
     res.render("user/place-order", {
       total,
       user: req.session.user,cartCount,
       userHead: true,
     });
-  });
+
 });
 
 router.post('/place-order',async(req, res)=>{
@@ -310,10 +344,15 @@ router.post('/place-order',async(req, res)=>{
   let deliveryAddress = await userHelpers.getAddress_PlaceOrder(req.session.user._id,req.session.addressIndex)
   let products = await cartHelpers.getCartProductList(userId);
   let totalPrice = await cartHelpers.getTotalAmount(userId);
+  if(req.session.amount){
+    totalPrice = req.session.amount.grandtotal
+    cartHelpers.userAppliedCoupon(req.session.user._id, req.session.couponData)
+  }
   req.session.total = totalPrice;
   userHelpers.placeOrder(products, deliveryAddress, totalPrice, req.body.method,userId).then((response) => {
     req.session.orderId = response.insertedId.toString();
     if (req.body['method']=='COD') {
+      
       res.json({ cod: true });
     } else if (req.body['method']=='razorpay') {
       
