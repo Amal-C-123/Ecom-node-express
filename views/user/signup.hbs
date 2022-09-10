@@ -88,6 +88,12 @@
                   </div>
                   <div class="col-12">
                     <div class="form-group">
+                      <label for="email">Referral Code (if you have any!)</label>
+                      <input name="referralCode" class="form-control" type="text">
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group">
                       <label for="password">Password <span class="required">*</span></label>
                       <input type="password" name="Password" id="password" class="form-control">
                       <p class="error text-center" id="password-error" style="color: red;"></p>
@@ -123,8 +129,8 @@
 
   <script>
 var UserNameError= document.getElementById('username-error');
-{{!-- var FirstNameError = document.getElementById('firstName-error');
-var LastNameError = document.getElementById('lastName-error'); --}}
+ var FirstNameError = document.getElementById('firstName-error');
+var LastNameError = document.getElementById('lastName-error');
 var emailError = document.getElementById('email-error');
 var phoneNumberError = document.getElementById('phoneNumber-error')
 var passwordError = document.getElementById('password-error')

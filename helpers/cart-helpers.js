@@ -9,6 +9,9 @@ module.exports = {
       quantity: 1,
     };
     return new Promise(async (resolve, reject) => {
+      if(!userId){
+        resolve({status: false})
+      }
       let userCart = await db
         .get()
         .collection(collection.CART_COLLECTION)
@@ -28,7 +31,9 @@ module.exports = {
                 $inc: { "products.$.quantity": 1 },
               }
             )
-            .then((response) => {});
+            .then((response) => {
+              resolve({alertOnly:true})
+            });
         } else {
           db.get()
             .collection(collection.CART_COLLECTION)
@@ -39,7 +44,7 @@ module.exports = {
               }
             )
             .then((response) => {
-              resolve();
+              resolve({status:true});
             });
         }
       } else {
@@ -51,7 +56,7 @@ module.exports = {
           .collection(collection.CART_COLLECTION)
           .insertOne(cartObj)
           .then((response) => {
-            resolve();
+            resolve({status:true});
           });
       }
     });

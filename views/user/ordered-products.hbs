@@ -4,7 +4,7 @@
       <div class="col-lg-10 col-xl-10">
         <div class="card" style="border-radius: 10px;">
           <div class="card-header px-4 py-5">
-            <h5 class="text-muted mb-0">Thanks for your Order, <span style="color: rgb(252, 123, 49);">{{user.username}}</span>!</h5>
+            <h5 class="text-muted mb-0">Thanks for your Order, <span style="color: rgb(252, 123, 49);">{{userLog.username}}</span>!</h5>
           </div>
           <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -40,26 +40,18 @@
             </div>
             {{/each}}
             
-            <div class="d-flex justify-content-between pt-2" style="float: right;">
-              {{!-- <p class="fw-bold mb-0">Order Details</p> --}}
+              <div class="d-flex justify-content-between pt-2">
+              <p class="fw-bold mb-0">Order Details</p>
               <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span>₹{{orders.totalAmount}}.00</p>
             </div>
+            <div class="d-flex justify-content-between ">
+              <p class="text-muted mb-0">Invoice Number : {{orders._id}}</p>
+              <p class="text-muted mb-0"><span class="fw-bold me-4">Discount Applied</span>₹{{orders.discountamount}}.00</p>
+            </div>
 
-            {{!-- <div class="d-flex justify-content-between pt-2">
-              <p class="text-muted mb-0">Invoice Number : {{this._id}}</p>
-              <p class="text-muted mb-0"><span class="fw-bold me-4">Discount</span> $00.00</p>
-            </div> --}}
-
-            {{!-- <div class="d-flex justify-content-between">
-              <p class="text-muted mb-0">Invoice Date : {{this.deliveryDetails.date}}</p>
-              <p class="text-muted mb-0"><span class="fw-bold me-4">GST 18%</span> 123</p>
-            </div> --}}
-
-            {{!-- <div class="d-flex justify-content-between mb-5">
-              <p class="text-muted mb-0">Recepits Voucher : </p>
-              <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
-            </div> --}}
+            
           </div>
+          
         </div>
       </div>
     </div>

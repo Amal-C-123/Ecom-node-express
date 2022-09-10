@@ -34,30 +34,33 @@
                           <tbody>
                             {{#each orders}}
                               <tr>
-                                <td>{{this.date}} </td>
+                                <td>{{this.dateShort}} </td>
                                 <td>{{this.address.address}} </td>
                                 <td>{{this.address.mobile}}</td>
                                 <td>₹ {{this.totalAmount}}</td>
                                 <td>{{this.paymentstatus}}</td>
 
                                 <td>
-                                  <div
-                                    style="display: flex; flex-direction:column;"
-                                  >
-                                    <button
-                                      class="btn btn-sm btn-primary"
-                                      style="margin-bottom: 0.2rem;"
-                                    ><a href="/view-order-details/{{this._id}}" style="color: white;"> View Details</a></button>
-                                    {{#if this.cancel}}
-
-                                    {{else}}
-                                    <button
-                                      class="btn btn-sm btn-danger"
-                                      onclick="cancelOrder('{{this._id}}')"
-                                    >Cancel</button>
-                                    {{/if}}
-                                  </div>
-
+                                  <div class="dropdown">
+                                      <button class="btn btn-sm btn-secondary dropdown-toggle" style="background-color:#eb3e32; border:none" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        view Details
+                                      </button>
+                                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item btn-sm" href="/view-order-details/{{this._id}}">Order Details</a></li>
+                                        {{#if this.cancel}}
+                                        {{else}}
+                                        <li><button class="dropdown-item btn-sm" onclick="returnOrder('{{this._id}}','Return')" >Return Order</button></li>
+                                        {{#if this.delivered}}
+                                           {{else}}
+                                           {{#if this.return}}
+                                           {{else}}
+                                          <li><button class="dropdown-item btn-sm" onclick="cancelOrder('{{this._id}}','cancelled')" style="color:red ;">Cancel Order</button></li>
+                                           {{/if}}
+                                        {{/if}}
+                                        
+                                        {{/if}}
+                                      </ul>
+                                    </div>
                                 </td>
                               </tr>
                             {{/each}}
@@ -89,9 +92,9 @@
 </main>
 
 <script>
-  function cancelOrder(orderId) {
+  function cancelOrder(orderId,status) {
    swal({
-    text:'Are you sure cancel this order',
+    text:'Are you sure to '+ status+ ' this order',
     // buttons: true,
     // dangerMode: true
    }).then((willCancel)=>{
@@ -99,7 +102,33 @@
       $.ajax({
         url: "/user-cancel-order",
         data: {
-          order:orderId
+          order:orderId,
+          status: status
+        },
+        method: "post",
+        success: (response) => {
+          if (response.acknowledged) {
+            location.reload();
+          }
+        },
+      })
+    }
+    
+   })
+  }
+
+  function returnOrder(orderId,status) {
+   swal({
+    text:'Are you sure to '+ status+ ' this order',
+    // buttons: true,
+    // dangerMode: true
+   }).then((willCancel)=>{
+    if(willCancel){
+      $.ajax({
+        url: "/return-order",
+        data: {
+          order:orderId,
+          status: status
         },
         method: "post",
         success: (response) => {

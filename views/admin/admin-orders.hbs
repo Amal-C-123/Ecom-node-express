@@ -25,7 +25,7 @@
                   <tbody>
                     {{#each Items}}
                       <tr>
-                        <td> {{this.date}} </td>
+                        <td> {{this.dateShort}} </td>
                         <td>{{this.address.address}}
                           <br />{{this.address.state}},
                           {{this.address.pincode}}
@@ -41,11 +41,17 @@
                               <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Change Status
                               </button>
+                              {{#if this.delivered}}
+                              {{else}}
+                              {{#if this.cancel}}
+                              {{else}}
                               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item " href="#"onclick="changeOrderStatus('{{this._id}}','pending')" >Pending</a>
                                 <a class="dropdown-item" href="#"  onclick="changeOrderStatus('{{this._id}}','delivered')">Delivered</a>
                                 <a class="dropdown-item" href="#"  onclick="changeOrderStatus('{{this._id}}','cancelled')">Cancel</a>
                               </div>
+                              {{/if}}
+                              {{/if}}
                             </div>   
                            <a class="btn btn-primary btn-sm" href="/admin/view-order/{{this._id}}" style="width: fit-content; margin-left:5px">view Details</a>
                           </div>
@@ -74,3 +80,26 @@
   </footer>
 
 </div>
+
+<script>
+  
+
+
+function changeOrderStatus(orderId,status) {
+    $.ajax({
+      url: "/admin/change-order-status/" + orderId,
+      method: "POST",
+      data: {
+        status: status,
+      },
+      success: (response) => {
+        if(response.statusChange){
+            swal('User Order Status Changed').then(()=>{
+                location.reload()
+            })
+        }
+      }
+    });
+  }
+  
+</script>

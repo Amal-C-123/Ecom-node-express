@@ -22,11 +22,11 @@
                       
                       
 
-                      {{#if user}}
+                      {{#if userLog.username}}
                       <li class="account">
                               <div class="dropdown">
                           <button class="btn btn-sm btn-secondary dropdown-toggle" style="background-color:#eb3e32; border:none" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{user.username}}
+                            {{userLog.username}}
                           </button>
                           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                             <li><a class="dropdown-item" href="/logout">Logout</a></li>
@@ -75,7 +75,7 @@
                   <div class="shopping-cart">
                     <button class="shopping-cart-btn" type="button"  data-bs-target="#AsideOffcanvasCart" aria-controls="offcanvasRightLabel">
                       <a href="/cart"><i class="pe-7s-shopbag icon"></i>
-                      {{#if user}}
+                      {{#if userLog.username}}
                           <span class="shop-count" id="cart-count">{{cartCount}}</span>
                           
                       {{/if}}
@@ -104,7 +104,7 @@
                   <li ><a href="/"><span>Home</span></a></li>
                   <li><a href="/shop"><span>Products</span></a>
                   <li><a href="/user-orders-list"><span>Orders</span></a>
-                  <li><a href="#"><span>Profile</span></a></li>
+                  <li><a href="/user-profile"><span>Profile</span></a></li>
                   
                 </ul>
               </div>

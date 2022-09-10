@@ -63,3 +63,36 @@
 
 </div>
 
+<script>
+    function offerActivate(cartId){
+        $.ajax({
+            url: '/admin/offer-activate',
+            data:{
+                categoryId: cartId,
+                offer: true
+            },
+            method: "post",
+            success: (response) => {
+                if(response.status){
+                    location.reload();
+                }
+            },
+        })
+    }
+
+    function offerDeactivate(cartId) {
+        $.ajax({
+            url: "/admin/offer-deactivate",
+            data: {
+                categoryId: cartId,
+                 offer: null
+            },
+            method: "post",
+            success: (response) => {
+                if(response.status){
+                    location.reload();
+                }
+            },
+        });
+    }
+</script>

@@ -12,7 +12,13 @@ function addToCart(proId) {
         count = parseInt(count) + 1;
         $("#cart-count").html(count);
         swal('Item Added to Cart')
+      }else if(response.alertOnly){
+        swal('Item Added to Cart')
       }
+      else{
+         window.location.href='/user-orders-list'
+      }
+      
     },
   })
     .done(() => {
@@ -44,6 +50,7 @@ function changeQuantity(cartId, proId, count, dummy) {
       } else {
         document.getElementById(proId).innerHTML = quantity + count;
         document.getElementById("total").innerHTML = "₹ " + response.total;
+        document.getElementById("total-price").innerHTML = "₹ " + response.total;
       }
     },
   });

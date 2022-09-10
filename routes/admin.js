@@ -7,11 +7,12 @@ const itemHelpers = require("../helpers/product-management");
 const store = require("../multer/multer");
 
 
+
 let userName = "admin";
 let pin = "12345";
 
 const verifyLogin = (req, res, next) => {
-  if (req.session.users) {
+  if (req.session.admin) {
     next();
   } else {
     res.render("admin/admin-login", {
@@ -22,9 +23,28 @@ const verifyLogin = (req, res, next) => {
   }
 };
 
+router.post("/view-dashboard", (req, res) => {
+  const { Email, Password } = req.body;
+  if (userName === Email && pin === Password) {
+    req.session.check = true;
+    req.session.admin = {
+      userName
+    };
+    res.redirect("/admin/admin-dashboard");
+  } else {
+    req.session.err = "incorrect username or password";
+    res.redirect("/admin");
+  }
+});
+
+router.get("/logout", (req, res) => {
+  req.session.admin = null;
+  res.redirect("/admin");
+});
+
 // get user listing
 router.get("/", (req, res) => {
-  if (req.session.users) {
+  if (req.session.admin) {
     res.redirect("/admin/admin-dashboard");
   } else {
     res.render("admin/admin-login", {
@@ -35,19 +55,6 @@ router.get("/", (req, res) => {
   }
 });
 
-router.post("/view-dashboard", (req, res) => {
-  const { Email, Password } = req.body;
-  if (userName === Email && pin === Password) {
-    req.session.check = true;
-    req.session.users = {
-      userName
-    };
-    res.redirect("/admin/admin-dashboard");
-  } else {
-    req.session.err = "incorrect username or password";
-    res.redirect("/admin");
-  }
-});
 
 router.get("/admin-dashboard", verifyLogin, (req, res) => {
   res.render("admin/adminDashboard", { admin: true });
@@ -63,8 +70,6 @@ router.get("/view-users", verifyLogin, (req, res) => {
 router.get("/Block-user/:id", verifyLogin, (req, res) => {
   let userId = req.params.id;
   userHelpers.blockUser(userId).then((response) => {
-    req.session.user = null;
-    req.session.loggedIn = null;
     res.redirect("/admin/view-users");
   }).catch(()=>{
     res.render('admin/404',{admin:true})
@@ -160,6 +165,8 @@ router.get("/categories", verifyLogin, (req, res) => {
   });
 });
 
+
+
 router.get('/show-banner',verifyLogin,(req,res)=>{
   itemHelpers.getAllBanner().then((banner)=>{
     res.render('admin/banner',{admin:true, banner})
@@ -176,6 +183,17 @@ router.get('/add-banner',verifyLogin,(req,res)=>{
     });
     req.body.Images = filenames;
     itemHelpers.addBanner(req.body).then(()=> {
+      res.redirect('/admin/show-banner')
+    })
+  })
+
+  router.get('/edit-banner/:id',verifyLogin, async(req, res)=>{
+    let banner = await itemHelpers.getOneBanner(req.params.id)
+      res.render('admin/edit-banner',{admin:true,banner})
+  })
+
+  router.post('/edit-banner/:id',verifyLogin, async(req, res)=>{
+    itemHelpers.updateBanner(req.params.id,req.body).then(()=>{
       res.redirect('/admin/show-banner')
     })
   })
@@ -232,6 +250,22 @@ router.post('/add-offer-category',verifyLogin, (req, res)=>{
     })
 })
 
+router.post('/offer-activate',(req,res)=>{
+  newoffer=req.body.offer
+  itemHelpers.changeOfferStatus(req.body.categoryId,newoffer).then((response)=>{
+    itemHelpers.activateCategoryOffer(req.body.categoryId)
+    res.json(response)
+  })
+})
+
+router.post('/offer-deactivate',(req,res)=>{
+  newoffer=req.body.offer
+  itemHelpers.changeOfferStatus(req.body.categoryId,newoffer).then((response)=>{
+    itemHelpers.deactivateCategoryOffer(req.body.categoryId)
+    res.json(response)
+  })
+})
+
 //orders
 router.get("/admin-orders", verifyLogin, (req, res) => {
   itemHelpers.getOrders().then((Items) => {
@@ -278,15 +312,9 @@ router.get('/delete-coupon/:id',verifyLogin, (req, res) => {
   })
 })
 
-router.get("/logout", (req, res) => {
-  req.session.users = null;
-  res.redirect("/admin");
-});
+
 
 // /about/*  for page not found
-
-
-
 
 
 

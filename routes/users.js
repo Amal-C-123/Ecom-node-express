@@ -9,8 +9,6 @@ var productHelpers = require("../helpers/product-management");
 const cartHelpers = require("../helpers/cart-helpers");
 const itemHelpers = require("../helpers/product-management");
 
-
-
 const client = require("twilio")(
   process.env.ACCOUNT_SID,
   process.env.AUTH_TOKEN,
@@ -20,67 +18,33 @@ const client = require("twilio")(
 );
 
 let User_number = "";
-let trueOtpSessionUser = {};
+let trueOtpUser = {};
+let editDetails;
 
-const verifyLogin = (req, res, next) => {
+const verifyLogin = async (req, res, next) => {
   if (req.session.loggedIn) {
+    req.session.cartCount = await cartHelpers.getCartCount(
+      req.session.user._id
+    );
     next();
   } else {
-    req.session.notLogged = "Please login First";
+    req.session.notLogged = "Please Login First";
+    req.session.user = null;
+    req.session.loggedIn = null;
     res.redirect("/login");
   }
 };
 
-
-/* GET users listing. */
-router.get("/", async function (req, res, next) {
-  let user = req.session.user;
-  // let userSession = req.session;
-  // console.log(userSession);
-  // userHelpers.isExist(userSession);
-  let cartCount = null;
-  if (req.session.user) {
-    cartCount = await cartHelpers.getCartCount(req.session.user._id);
-  }
-  let banner= await itemHelpers.getAllBanner()
-  let categories= await productHelpers.getCategories()
-  productHelpers.getAllProducts().then((products) => {
-    res.render("index", { userHead: true, user, products, cartCount,banner,categories });
-  });
-});
-
-router.get('/shop', async (req, res)=>{          //all products page
-  let cartCount
-  let user=req.session.user
-  if(req.session.user){
-    cartCount = await cartHelpers.getCartCount(req.session.user._id);
-  }
-  let categories= await productHelpers.getCategories()
-  console.log(categories);
-  productHelpers.listAllProducts().then((products)=>{
-    res.render('user/shop',{userHead:true, products,cartCount,user, categories})
-  })
-})
-
-
-//view products according to category
-router.get('/show-products/:id', async(req, res)=>{
-  let cartCount
-  let user=req.session.user
-  if(req.session.user){
-    cartCount = await cartHelpers.getCartCount(req.session.user._id);
-  }
-  let categories= await productHelpers.getCategories()
-  productHelpers.categoryFilter(req.params.id).then((products)=>{
-    res.render('user/shop', {userHead:true, products,cartCount,user ,categories})
-  })
-})
+const verifyCartCount = (req, res, next) => {
+  if (req.session.cartCount) next();
+  else res.redirect("/shop");
+};
 
 router.get("/login", (req, res) => {
   let blocked = req.session.blockedUser;
   let notLogged = req.session.notLogged;
   if (req.session.loggedIn) {
-    res.redirect("/user-dashboard");
+    res.redirect("/user-profile");
   } else {
     res.render("user/login", {
       loginErr: req.session.loginErr,
@@ -109,61 +73,6 @@ router.post("/login", (req, res) => {
   });
 });
 
-//view products in users home page
-router.get("/view-product/:id", async function (req, res) {
-  let user = req.session.user;
-  let cartCount = null;
-  if (user) {
-    cartCount = await cartHelpers.getCartCount(req.session.user._id);
-  }
-
-  productHelpers
-    .getProductData(req.params.id)
-    .then((product) => {
-      res.render("user/product-details", {
-        product,
-        user,
-        cartCount,
-        userHead: true,
-      });
-    })
-    .catch(() => {
-      res.render("user/404", { userHead: true });
-    });
-});
-
-router.get("/user-orders-list", verifyLogin, async (req, res) => {
-  let user = req.session.user;
-  let cartCount = await cartHelpers.getCartCount(req.session.user._id);
-  let orders = await userHelpers.getUserOrders(user._id);
-  res.render("user/user-orders", { user, cartCount, orders, userHead: true });
-});
-
-router.get("/view-order-details/:id", verifyLogin, async (req, res) => {
-  let user= req.session.user
-  let cartCount= await cartHelpers.getCartCount(req.session.user._id);
-  let orders= await userHelpers.getOrderDetails(req.params.id);
-  userHelpers.getOrderedProducts(req.params.id).then((products)=>{
-    res.render("user/ordered-products",{userHead:true, products,user,cartCount,orders});   
-  })
-  
-});
-
-
-router.post("/user-cancel-order", verifyLogin, (req, res) => {
-  let user = req.session.user;
-  userHelpers.changeOrderStatus(req.body.order).then((response) => {
-    res.json(response);
-  });
-});
-
-
-router.get("/logout", (req, res) => {
-  req.session.loggedIn = null;
-  req.session.user = null;
-  res.redirect("/");
-});
-
 router.get("/signup", (req, res) => {
   res.render("user/signup", { signErr: req.session.signErr });
   req.session.signErr = false;
@@ -171,12 +80,20 @@ router.get("/signup", (req, res) => {
 
 router.post("/signup", (req, res) => {
   let reqBody = req.body;
+  let Phone = parseInt(req.body.Phone);
+  let walletAction = "Referral credit";
   reqBody.block = "";
+  reqBody.userReferralCode = Phone.toString(16);
   userHelpers.doSignUp(req.body).then((response) => {
     if (response.status) {
       req.session.signErr = true;
       res.redirect("/signup");
     } else {
+      userHelpers.referralCheck(req.body.referralCode);
+      userHelpers.updateWalletCreditReferral(
+        req.body.referralCode,
+        walletAction
+      );
       res.redirect("/login");
     }
   });
@@ -195,8 +112,7 @@ router.post("/otp-verification", (req, res) => {
     } else if (response.userBlock == true) {
       res.render("user/otp-login", { userBlock: true });
     } else {
-      // req.session.user = response;
-      trueOtpSessionUser = response;
+      trueOtpUser = response;
       const { number } = req.body;
       console.log(number);
       User_number = number;
@@ -204,7 +120,7 @@ router.post("/otp-verification", (req, res) => {
         to: `+91${number}`,
         channel: "sms",
       });
-      res.render("user/otp-verify", {  user: response.user });
+      res.render("user/otp-verify", { user: response.user });
     }
   });
 });
@@ -225,56 +141,270 @@ router.post("/otp-matching", function (req, res) {
         let otpvalidation = req.session.otp;
         res.render("user/otp-verify", { otpvalidation });
       } else if (resp.valid == true) {
-        req.session.user = trueOtpSessionUser;
+        req.session.user = trueOtpUser;
         req.session.loggedIn = true;
         res.redirect("/");
       }
     });
 });
 
-//cart section
-router.get("/cart", verifyLogin, async (req, res) => {
-  let user = req.session.user;
-  let cartCount = await cartHelpers.getCartCount(req.session.user._id);
-  let products = await cartHelpers.getCartProducts(req.session.user._id)
-  let total = await cartHelpers.getTotalAmount(req.session.user._id);
-  res.render("user/cart", { userHead: true, products, cartCount, total, user });
-  req.session.user.cartCount = cartCount;
+router.get("/user-profile", verifyLogin, async (req, res) => {
+  let userLog = req.session.user;
+  let cartCount = req.session.cartCount;
+  let walletDetails = await userHelpers.getWallet(userLog._id);
+  let userAddress= await userHelpers.getUserAddress(userLog._id)
+  console.log(userAddress);
+  res.render("user/userProfile", {
+    userHead: true,
+    userLog,
+    cartCount,
+    walletDetails,
+    userAddress,
+    change: editDetails,
+    passwordSuccess: passwordSuccess,
+    resetEr: resetEr,
+    passwordMatchEr: passwordMatchEr,
+  });
+  editDetails = false;
+  passwordSuccess =false
+  resetEr=false
+  passwordMatchEr= false
 });
 
-router.post('/coupon', verifyLogin, async(req,res)=>{
-  req.session.couponData = req.body.coupon
-  let amount = {};
-  cartHelpers.couponCheck(req.session.user._id, req.body).then((response)=>{
-    if(response.coupon){
-      amount=response 
-      req.session.amount = amount
-      amount.status=true
-        res.json(amount)
+//edit profile
+router.post("/editprofile", verifyLogin, (req, res) => {
+  let userLog = req.session.user;
+  userHelpers.editProfile(userLog._id, req.body).then((editedUser) => {
+    req.session.user = editedUser;
+    editDetails = true;
+    res.redirect("/user-profile");
+  });
+});
 
-    }else if(response.usedcoupon){
-      console.log('coupon already used');
-      amount.used=true
-      res.json(amount)
-    }else if(response.small){
-      console.log('Not within Cap limits');
-      amount.small=true
-      res.json(amount)
-    }else if(response.expired){
-      console.log('Coupon expired');
-      amount.expired=true
-      res.json(amount)
-    }else{
-      console.log('coupon invalid');
-      amount.status=false
-      res.json(amount)
-    }
+//password reset
+var resetEr;
+var passwordMatchEr;
+var passwordSuccess;
+router.post("/resetpassword", (req, res) => {
+  let userLog= req.session.user
+  console.log(req.body);
+  if (req.body.Newpassword === req.body.Confirmpassword) {
+    console.log("true");
+    userHelpers
+      .resetPassword(userLog._id, req.body)
+      .then(() => {
+        res.redirect("/user-profile");
+        passwordSuccess = true;
+      })
+      .catch((err) => {
+        res.redirect("/user-profile");
+        resetEr = true;
+      });
+  } else {
+    res.redirect("/user-profile");
+    console.log("false");
+    passwordMatchEr = true;
+  }
+});
+
+//userAddAddress
+router.post('/addaddress',verifyLogin, (req, res) => {  
+  let userLog=req.session.user 
+  userHelpers.addAddressUser(req.body, userLog._id).then(() => {
+     res.redirect('/user-profile')
   })
+
+
 })
 
-router.get("/add-to-cart/:id", verifyLogin, (req, res) => {
-  cartHelpers.addToCart(req.params.id, req.session.user._id).then((data) => {
-    res.json({ status: true });
+router.get("/logout", (req, res) => {
+  req.session.loggedIn = null;
+  req.session.user = null;
+  res.redirect("/");
+});
+
+/* GET users listing. */
+router.get("/", async function (req, res, next) {
+  let userLog = req.session?.user;
+  let cartCount = req.session.loggedIn
+    ? await cartHelpers.getCartCount(userLog._id)
+    : null;
+
+  let banner = await itemHelpers.getAllBanner();
+  let categories = await productHelpers.getCategories();
+  productHelpers.getAllProducts().then((products) => {
+    res.render("index", {
+      userHead: true,
+      userLog,
+      products,
+      cartCount,
+      banner,
+      categories,
+    });
+  });
+});
+
+//all products page
+router.get("/shop", async (req, res) => {
+  let userLog = req.session?.user;
+  let cartCount = req.session.loggedIn
+    ? await cartHelpers.getCartCount(userLog._id)
+    : null;
+  let categories = await productHelpers.getCategories();
+  productHelpers.getAllProducts().then((products) => {
+    res.render("user/shop", {
+      userHead: true,
+      products,
+      cartCount,
+      userLog,
+      categories,
+    });
+  });
+});
+
+//view products according to category
+router.get("/show-products/:id", async (req, res) => {
+  let userLog = req.session?.user;
+  let cartCount = req.session.loggedIn
+    ? await cartHelpers.getCartCount(userLog._id)
+    : null;
+  let categories = await productHelpers.getCategories();
+  productHelpers.categoryFilter(req.params.id).then((products) => {
+    res.render("user/shop", {
+      userHead: true,
+      products,
+      userLog,
+      cartCount,
+      categories,
+    });
+  });
+});
+
+//view products in users home page
+router.get("/view-product/:id", async function (req, res) {
+  let userLog = req.session?.user;
+  let cartCount = req.session.loggedIn
+    ? await cartHelpers.getCartCount(userLog._id)
+    : null;
+  productHelpers
+    .getProductData(req.params.id)
+    .then((product) => {
+      res.render("user/product-details", {
+        product,
+        userLog,
+        cartCount,
+        userHead: true,
+      });
+    })
+    .catch(() => {
+      res.render("user/404", { userHead: true });
+    });
+});
+
+router.get("/user-orders-list", verifyLogin, async (req, res) => {
+  let userLog = req.session.user;
+  let cartCount = req.session.cartCount;
+  let orders = await userHelpers.getUserOrders(userLog._id);
+  res.render("user/user-orders", {
+    userLog,
+    cartCount,
+    orders,
+    userHead: true,
+  });
+});
+
+router.get("/view-order-details/:id", verifyLogin, async (req, res) => {
+  let userLog = req.session.user;
+  let cartCount = req.session.cartCount;
+  let orders = await userHelpers.getOrderDetails(req.params.id);
+  userHelpers
+    .getOrderedProducts(req.params.id)
+    .then((products) => {
+      res.render("user/ordered-products", {
+        userHead: true,
+        products,
+        userLog,
+        cartCount,
+        orders,
+      });
+    })
+    .catch(() => {
+      res.render("user/404", { userHead: true });
+    });
+});
+
+router.post("/user-cancel-order", (req, res) => {
+  userHelpers
+    .cancelOrderStatus(req.body.order, req.body.status)
+    .then((response) => {
+      res.json(response);
+    })
+    .catch(() => {
+      res.render("user/404", { userHead: true });
+    });
+});
+
+router.post("/return-order", (req, res) => {
+  userHelpers
+    .returnOrderStatus(req.body.order, req.body.status)
+    .then((response) => {
+      res.json(response);
+    })
+    .catch(() => {
+      res.render("user/404", { userHead: true });
+    });
+});
+
+//cart section
+router.get("/cart", verifyLogin, async (req, res) => {
+  let userLog = req.session.user;
+  let cartCount = req.session.cartCount;
+  let products = await cartHelpers.getCartProducts(userLog._id);
+  let total = await cartHelpers.getTotalAmount(userLog._id);
+  res.render("user/cart", {
+    userHead: true,
+    products,
+    cartCount,
+    total,
+    userLog,
+  });
+});
+
+router.post("/coupon", verifyLogin, async (req, res) => {
+  let userLog = req.session.user;
+  req.session.couponData = req.body.coupon;
+  let amount = {};
+  cartHelpers.couponCheck(userLog._id, req.body).then((response) => {
+    if (response.coupon) {
+      amount = response;
+      req.session.couponedAmount = amount;
+      amount.status = true;
+      res.json(amount);
+    } else if (response.usedcoupon) {
+      console.log("coupon already used");
+      amount.used = true;
+      res.json(amount);
+    } else if (response.small) {
+      console.log("Not within Cap limits");
+      amount.small = true;
+      res.json(amount);
+    } else if (response.expired) {
+      console.log("Coupon expired");
+      amount.expired = true;
+      res.json(amount);
+    } else {
+      console.log("coupon invalid");
+      amount.status = false;
+      res.json(amount);
+    }
+  });
+});
+
+router.get("/add-to-cart/:id", (req, res) => {
+  let userLog = req.session.user;
+  cartHelpers.addToCart(req.params.id, userLog?._id).then((data) => {
+    console.log(data);
+    res.json(data);
   });
 });
 
@@ -285,8 +415,9 @@ router.post("/delete-cart-product", verifyLogin, (req, res) => {
 });
 
 router.post("/change-product-quantity", verifyLogin, (req, res, next) => {
+  let userLog = req.session.user;
   cartHelpers.changeProductQuantity(req.body).then(async (response) => {
-    let total = await cartHelpers.getTotalAmount(req.session.user._id);
+    let total = await cartHelpers.getTotalAmount(userLog._id);
     if (total > 0) {
       response.total = total;
     }
@@ -294,16 +425,15 @@ router.post("/change-product-quantity", verifyLogin, (req, res, next) => {
   });
 });
 
-router.get("/checkout", verifyLogin, async (req, res) => {
-  let user = req.session.user;
-  let cartCount = user?.cartCount;
-  let total = await cartHelpers.getTotalAmount(req.session.user._id);
-
-  userHelpers.getAddress(req.session.user._id).then((address) => {
+router.get("/checkout", verifyLogin, verifyCartCount, async (req, res) => {
+  let userLog = req.session.user;
+  let cartCount = req.session.cartCount;
+  let total = await cartHelpers.getTotalAmount(userLog._id);
+  userHelpers.getAddress(userLog._id).then((address) => {
     res.render("user/checkout", {
       address,
       total,
-      user,
+      userLog,
       cartCount,
       userHead: true,
     });
@@ -312,7 +442,8 @@ router.get("/checkout", verifyLogin, async (req, res) => {
 
 //add address checkout
 router.post("/add-address", (req, res) => {
-  userHelpers.addAdrress(req.body, req.session.user._id).then((address) => {
+  let userLog = req.session.user;
+  userHelpers.addAdrress(req.body, userLog._id).then((address) => {
     res.redirect("/checkout");
   });
 });
@@ -323,39 +454,52 @@ router.post("/checkout", (req, res) => {
   res.redirect("/place-order");
 });
 
-router.get("/place-order", verifyLogin, async(req, res) => {
-  let cartCount =req.session.user?.cartCount;
-  console.log(req.session.amount);
-  let total = await cartHelpers.getTotalAmount(req.session.user._id)  
-  if(req.session.amount){
-    total = req.session.amount.grandtotal
-    
+router.get("/place-order", verifyLogin, verifyCartCount, async (req, res) => {
+  console.log(req.session.couponedAmount);
+  let userLog = req.session.user;
+  let cartCount = req.session.cartCount;
+  let total = await cartHelpers.getTotalAmount(userLog._id);
+  if (req.session.couponedAmount) {
+    total = req.session.couponedAmount.grandtotal;
   }
-    res.render("user/place-order", {
-      total,
-      user: req.session.user,cartCount,
-      userHead: true,
-    });
-
+  res.render("user/place-order", {
+    total,
+    userLog,
+    cartCount,
+    userHead: true,
+  });
 });
 
-router.post('/place-order',async(req, res)=>{
-  let userId = req.session.user._id;
-  let deliveryAddress = await userHelpers.getAddress_PlaceOrder(req.session.user._id,req.session.addressIndex)
-  let products = await cartHelpers.getCartProductList(userId);
-  let totalPrice = await cartHelpers.getTotalAmount(userId);
-  if(req.session.amount){
-    totalPrice = req.session.amount.grandtotal
-    cartHelpers.userAppliedCoupon(req.session.user._id, req.session.couponData)
+router.post("/place-order", async (req, res) => {
+  let userLog = req.session.user;
+  let deliveryAddress = await userHelpers.getAddress_PlaceOrder(
+    userLog._id,
+    req.session.addressIndex
+  );
+  let products = await cartHelpers.getCartProductList(userLog._id);
+  let totalPrice = await cartHelpers.getTotalAmount(userLog._id);
+  let discount;
+  if (req.session.couponedAmount) {
+    totalPrice = req.session.couponedAmount.grandtotal;
+    discount = req.session.couponedAmount.discountamount;
+    cartHelpers.userAppliedCoupon(userLog._id, req.session.couponData);
+    req.session.couponedAmount = null;
   }
   req.session.total = totalPrice;
-  userHelpers.placeOrder(products, deliveryAddress, totalPrice, req.body.method,userId).then((response) => {
-    req.session.orderId = response.insertedId.toString();
-    if (req.body['method']=='COD') {
-      
-      res.json({ cod: true });
-    } else if (req.body['method']=='razorpay') {
-      
+  userHelpers
+    .placeOrder(
+      products,
+      deliveryAddress,
+      totalPrice,
+      req.body.method,
+      userLog._id,
+      discount
+    )
+    .then((response) => {
+      req.session.orderId = response.insertedId.toString();
+      if (req.body["method"] == "COD") {
+        res.json({ cod: true });
+      } else if (req.body["method"] == "razorpay") {
         userHelpers
           .generateRazorPay(req.session.orderId, totalPrice)
           .then((order) => {
@@ -363,35 +507,23 @@ router.post('/place-order',async(req, res)=>{
             order.razorpay = true;
             res.json(order);
           });
-      
-    } else if (req.body['method']=='paypal') {
-      userHelpers.priceConvert(totalPrice).then((convertedPrice)=>{
-        req.session.totalPrice = convertedPrice
-        userHelpers
-          .generatePayPal(req.session.orderId, convertedPrice)
-          .then((data) => {
-            res.json(data);
-          });
-      })
-
-      // cartHelpers.getOrderId(userId).then(async (orderDetails) => {
-      //   totalPrice= await userHelpers.priceConvert(totalPrice)
-      //   req.session.totalPrice = totalPrice
-      //   userHelpers
-      //     .generatePayPal(orderDetails._id.toString(), totalPrice)
-      //     .then((data) => {
-      //       res.json(data);
-      //     });
-      // });
-    }
-  });
-})
+      } else if (req.body["method"] == "paypal") {
+        userHelpers.priceConvert(totalPrice).then((convertedPrice) => {
+          req.session.totalPrice = convertedPrice;
+          userHelpers
+            .generatePayPal(req.session.orderId, convertedPrice)
+            .then((data) => {
+              res.json(data);
+            });
+        });
+      }
+    });
+});
 
 //razorpay verify Amount
 
 router.post("/verify-payment", verifyLogin, (req, res) => {
   userHelpers.verifyPayment(req.body).then(() => {
-    
     userHelpers
       .changePaymentStatus(req.body["order[receipt]"])
       .then(() => {
@@ -440,7 +572,7 @@ router.get("/success", verifyLogin, (req, res) => {
   });
 });
 
-router.get('/cancel',verifyLogin, (req,res)=>{
-  res.send('Cancelled')
-})
+router.get("/cancel", verifyLogin, (req, res) => {
+  res.send("Cancelled");
+});
 module.exports = router;
