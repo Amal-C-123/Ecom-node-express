@@ -19,14 +19,15 @@
                     <div class="myaccount-content">
                       <h3>Orders</h3>
                       <div class="myaccount-content">
-
+                        {{#if orders}}
                         <table class="table table-bordered">
                           <thead class="thead-light">
                             <tr>
                               <th>Date</th>
                               <th>Address</th>
-                              <th>Phone</th>
+                              <th>Pin</th>
                               <th>Amount</th>
+                              <th>Via</th>
                               <th>Status</th>
                               <th>Action</th>
                             </tr>
@@ -35,9 +36,10 @@
                             {{#each orders}}
                               <tr>
                                 <td>{{this.dateShort}} </td>
-                                <td>{{this.address.address}} </td>
-                                <td>{{this.address.mobile}}</td>
+                                <td>{{this.address.Housename}},{{this.address.Streetname}} </td>
+                                <td>{{this.address.Pin}}</td>
                                 <td>₹ {{this.totalAmount}}</td>
+                                <td>{{this.paymentMethod}}</td>
                                 <td>{{this.paymentstatus}}</td>
 
                                 <td>
@@ -54,7 +56,7 @@
                                            {{else}}
                                            {{#if this.return}}
                                            {{else}}
-                                          <li><button class="dropdown-item btn-sm" onclick="cancelOrder('{{this._id}}','cancelled')" style="color:red ;">Cancel Order</button></li>
+                                          <li><button class="dropdown-item btn-sm" onclick="cancelOrder('{{this._id}}','cancelled','{{this.paymentMethod}}','{{this.totalAmount}}', '{{this._id}}')" style="color:red ;">Cancel Order</button></li>
                                            {{/if}}
                                         {{/if}}
                                         
@@ -66,7 +68,9 @@
                             {{/each}}
                           </tbody>
                         </table>
-
+                       {{else}}
+                       <h3 class="text-center">No Orders Yet</h3>
+                       {{/if}}
                       </div>
 
                     </div>
@@ -92,7 +96,7 @@
 </main>
 
 <script>
-  function cancelOrder(orderId,status) {
+  function cancelOrder(orderId,status,paymentMethod,total,order) {
    swal({
     text:'Are you sure to '+ status+ ' this order',
     // buttons: true,
@@ -103,7 +107,10 @@
         url: "/user-cancel-order",
         data: {
           order:orderId,
-          status: status
+          status: status,
+          paymentMethod: paymentMethod,
+          total: total,
+          orderId: order
         },
         method: "post",
         success: (response) => {

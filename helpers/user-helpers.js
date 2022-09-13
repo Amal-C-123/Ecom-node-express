@@ -6,6 +6,7 @@ require("dotenv").config();
 const RazorPay = require("razorpay");
 const paypal = require("paypal-rest-sdk");
 const CC = require("currency-converter-lt");
+const { resolve } = require("path");
 var instance = new RazorPay({
   key_id: process.env.KEY_ID,
   key_secret: process.env.KEY_SECRET,
@@ -170,6 +171,61 @@ module.exports = {
     });
   },
 
+  updateWallet: (userId, walletbalance, orderId, totalPrice) => {
+    totalPrice = parseInt(totalPrice);
+    let walletHistory = {
+      order: objectId(orderId),
+      status: "debited",
+      amount: totalPrice,
+      date1: new Date().toDateString(),
+      action: "Product purchase",
+    };
+
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.WALLET_COLLECTION)
+        .updateOne(
+          { userId: objectId(userId) },
+          {
+            $set: {
+              wallet: walletbalance,
+            },
+            $push: {
+              walletHistory: walletHistory,
+            },
+          }
+        )
+        .then(() => {
+          resolve();
+        });
+    });
+  },
+
+  cancelAmountWallet: (userId, total)=>{
+    total = parseInt(total)
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.WALLET_COLLECTION)
+                .updateOne({ userId: objectId(userId) }, { $inc: { wallet: total } })
+            resolve()
+        })
+  },
+
+  updateWalletCredit: (userId, orderId, totalPrice, walletAction) => {
+    console.log('hiii');
+    return new Promise((resolve, reject) => {
+        let walletHistory = {
+            order: objectId(orderId),
+            status: "credited",
+            amount: totalPrice,
+            date1: new Date().toDateString(),
+            action: walletAction
+        }
+        db.get().collection(collection.WALLET_COLLECTION)
+            .updateOne({ userId: objectId(userId) }, { $push: { walletHistory: walletHistory } })
+        resolve()
+    })
+},
+
   doLogin: (userData) => {
     return new Promise(async (resolve, reject) => {
       let loginStatus = false;
@@ -256,15 +312,13 @@ module.exports = {
   //addAddressUser
   addAddressUser: (addressData, uId) => {
     let addressObj = {
-      addressDetail: 
-        {
-          index: Math.floor(Math.random() * 90000) + 10000,
-          Housename: addressData.Housename,
-          Streetname: addressData.Streetname,
-          State: addressData.State,
-          Pin: addressData.Pin,
-        },
-      
+      addressDetail: {
+        index: Math.floor(Math.random() * 90000) + 10000,
+        Housename: addressData.Housename,
+        Streetname: addressData.Streetname,
+        State: addressData.State,
+        Pin: addressData.Pin,
+      },
     };
 
     return new Promise(async (resolve, reject) => {
@@ -304,17 +358,43 @@ module.exports = {
             $match: { user: objectId(userId) },
           },
           {
-            $unwind: '$addressDetail'
+            $unwind: "$addressDetail",
           },
           {
-            $project:{
-              addressDetail:1
-            }
-          }
+            $project: {
+              addressDetail: 1,
+            },
+          },
         ])
         .toArray();
 
       resolve(address);
+    });
+  },
+
+  //get saved single address
+  getSingleAddress: (index, uId) => {
+    return new Promise(async (resolve, reject) => {
+      let address = await db
+        .get()
+        .collection(collection.ADDRESS_USER)
+        .aggregate([
+          {
+            $match: { user: objectId(uId) },
+          },
+          {
+            $unwind: "$addressDetail",
+          },
+          {
+            $match: { "addressDetail.index": index },
+          },
+          {
+            $project: { addressDetail: 1 },
+          },
+        ])
+        .toArray();
+
+      resolve(address[0].addressDetail);
     });
   },
 
@@ -453,7 +533,6 @@ module.exports = {
     userId,
     discount
   ) => {
-    console.log(total, "uuuuuuuuuuuuuuuuuuuuuuuuu");
     return new Promise((resolve, reject) => {
       let status = paymentMethod === "COD" ? "placed" : "pending";
       let orderObj = {
@@ -466,19 +545,22 @@ module.exports = {
         date: new Date(), //.toUTCString().slice(0, 25),
         dateShort: new Date().toDateString(),
         discountamount: discount,
+        cancel: false
       };
-      console.log(orderObj);
       db.get()
         .collection(collection.ORDER_COLLECTION)
         .insertOne(orderObj)
-        .then((data) => {
-          db.get()
-            .collection(collection.CART_COLLECTION)
-            .deleteOne({ user: objectId(userId) })
-            .then(() => {
-              resolve(data);
-            });
+        .then((response) => {
+          resolve(response);
         });
+    });
+  },
+
+  clearCart: (userId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collection.CART_COLLECTION)
+        .deleteOne({ user: objectId(userId) });
     });
   },
 
@@ -499,10 +581,10 @@ module.exports = {
         ])
         .sort({ date: -1 })
         .toArray();
+      db.get()
+        .collection(collection.ORDER_COLLECTION)
+        .deleteMany({ paymentstatus: "pending" });
       console.log(orders);
-      // .find({ userId: objectId(userId) },)
-      // .sort({ date: -1 })
-      // .toArray();
       resolve(orders);
     });
   },

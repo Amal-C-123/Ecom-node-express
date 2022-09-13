@@ -29,6 +29,13 @@
                          <label class="" for="age2">Pay pal</label><br> 
                         <input type="radio" id="age2" name="method" value="paypal" >
                        </div>
+                       {{#if wallet.wallet}}
+                       <div class="d-flex justify-content-between">
+                         <label class="" for="age2">Wallet [Rs {{wallet.wallet}}]</label><br> 
+                        <input type="radio" id="age2" name="method" value="wallet">
+                       </div>
+                       {{else}}
+                       {{/if}}
                        </li>
                 <li class="list-group-item d-flex justify-content-between ">
                     <span>Total :</span>
@@ -62,7 +69,14 @@
         swal('Order placed successfully').then(()=>{
           location.href = "/user-orders-list";
         })
-      }else if(response.razorpay == true){
+      }else if(response.walletLow){
+          swal("Info!", "Wallet insufficient balance", "warning")
+      }else if( response.walletSuccess){
+        swal('Order placed successfully').then(()=>{
+          location.href = "/user-orders-list";
+        })
+      }
+      else if(response.razorpay == true){
           razorpayPayment(response)
       }else if (response.payer.payment_method = 'paypal'){
            for (let i = 0; i < response.links.length; i++) {

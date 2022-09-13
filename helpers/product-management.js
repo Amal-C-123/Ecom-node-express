@@ -22,15 +22,90 @@ module.exports = {
     });
   },
 
-  // listAllProducts: () => {
-  //   return new Promise(async (resolve, reject) => {
-  //     let products = await db
-  //       .get()
-  //       .collection(collection.PRODUCT_COLLECTIONS)
-  //       .find()
-  //       .toArray();
-  //     resolve(products);
-  //   });
+  getUserCount: () => {
+    return new Promise(async (resolve, reject) => {
+      let userCount = await db
+        .get()
+        .collection(collection.USER_COLLECTION)
+        .countDocuments();
+      resolve(userCount);
+    });
+  },
+
+  getProductCount: () => {
+    return new Promise(async (resolve, reject) => {
+      let productCount = await db
+        .get()
+        .collection(collection.PRODUCT_COLLECTIONS)
+        .count();
+      resolve(productCount);
+    });
+  },
+
+  getTotalRevenue: () => {
+    return new Promise(async (resolve, reject) => {
+      let totalRevenue = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              cancel: false,
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              grandTotal: {
+                $sum: "$totalAmount",
+              },
+            },
+          },
+          {
+            $project: {
+              grandTotal: 1,
+            },
+          },
+        ])
+        .toArray();
+
+      resolve(totalRevenue[0].grandTotal);
+    });
+  },
+
+  getOrdersCount: () => {
+    return new Promise(async (resolve, reject) => {
+      let ordersCount = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .count();
+      resolve(ordersCount);
+    });
+  },
+
+  getPaymentMethodNums: (paymentMethod) => {
+    return new Promise(async (resolve, reject) => {
+      let response = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $match: {
+              paymentMethod: paymentMethod,
+            },
+          },
+          {
+            $count: "count",
+          },
+        ])
+        .toArray();
+      resolve(response);
+    });
+  },
+
+  // getChartData: (year) => {
+  //   year= parseInt(year)
+
   // },
 
   getAllBanner: () => {
@@ -429,47 +504,45 @@ module.exports = {
   },
 
   changeOrderStatus: (orderId, status) => {
-    return new Promise( (resolve, reject) => {
-      if(status=='delivered'){
-        db
-        .get()
-        .collection(collection.ORDER_COLLECTION)
-        .updateOne(
-          { _id: objectId(orderId) },
-          {
-            $set: {
-              paymentstatus: status, delivered:true
-            },
-          }
-        ); 
+    return new Promise((resolve, reject) => {
+      if (status == "delivered") {
+        db.get()
+          .collection(collection.ORDER_COLLECTION)
+          .updateOne(
+            { _id: objectId(orderId) },
+            {
+              $set: {
+                paymentstatus: status,
+                delivered: true,
+              },
+            }
+          );
         resolve({ statusChange: true });
-      }else if(status=='cancelled'){
-            db
-            .get()
-            .collection(collection.ORDER_COLLECTION)
-            .updateOne(
-              { _id: objectId(orderId) },
-              {
-                $set: {
-                  paymentstatus: status, cancel:true
-                },
-              }
-            );
-          resolve({ statusChange: true });
-      }
-      else{
-        db
-        .get()
-        .collection(collection.ORDER_COLLECTION)
-        .updateOne(
-          { _id: objectId(orderId) },
-          {
-            $set: {
-              paymentstatus: status,
-            },
-          }
-        );
-      resolve({ statusChange: true });
+      } else if (status == "cancelled") {
+        db.get()
+          .collection(collection.ORDER_COLLECTION)
+          .updateOne(
+            { _id: objectId(orderId) },
+            {
+              $set: {
+                paymentstatus: status,
+                cancel: true,
+              },
+            }
+          );
+        resolve({ statusChange: true });
+      } else {
+        db.get()
+          .collection(collection.ORDER_COLLECTION)
+          .updateOne(
+            { _id: objectId(orderId) },
+            {
+              $set: {
+                paymentstatus: status,
+              },
+            }
+          );
+        resolve({ statusChange: true });
       }
     });
   },

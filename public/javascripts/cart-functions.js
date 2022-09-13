@@ -56,5 +56,25 @@ function changeQuantity(cartId, proId, count, dummy) {
   });
 }
 
+function fetchAddress(index){
+ let houseName= document.getElementById('address')
+ let street= document.getElementById('town')
+ let state= document.getElementById('state')
+ let pin= document.getElementById('pincode')
+  $.ajax({
+    url: '/fetch-single-address',
+    data: {
+      index: index
+    },
+    method: 'post',
+    success: (address)=>{
+     
+      houseName.value= address.Housename
+      street.value= address.Streetname
+      state.value= address.State
+      pin.value= address.Pin
+    }
+  })
 
+}
 

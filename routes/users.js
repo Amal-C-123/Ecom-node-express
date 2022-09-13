@@ -152,7 +152,7 @@ router.get("/user-profile", verifyLogin, async (req, res) => {
   let userLog = req.session.user;
   let cartCount = req.session.cartCount;
   let walletDetails = await userHelpers.getWallet(userLog._id);
-  let userAddress= await userHelpers.getUserAddress(userLog._id)
+  let userAddress = await userHelpers.getUserAddress(userLog._id);
   console.log(userAddress);
   res.render("user/userProfile", {
     userHead: true,
@@ -166,9 +166,9 @@ router.get("/user-profile", verifyLogin, async (req, res) => {
     passwordMatchEr: passwordMatchEr,
   });
   editDetails = false;
-  passwordSuccess =false
-  resetEr=false
-  passwordMatchEr= false
+  passwordSuccess = false;
+  resetEr = false;
+  passwordMatchEr = false;
 });
 
 //edit profile
@@ -186,7 +186,7 @@ var resetEr;
 var passwordMatchEr;
 var passwordSuccess;
 router.post("/resetpassword", (req, res) => {
-  let userLog= req.session.user
+  let userLog = req.session.user;
   console.log(req.body);
   if (req.body.Newpassword === req.body.Confirmpassword) {
     console.log("true");
@@ -208,14 +208,12 @@ router.post("/resetpassword", (req, res) => {
 });
 
 //userAddAddress
-router.post('/addaddress',verifyLogin, (req, res) => {  
-  let userLog=req.session.user 
+router.post("/addaddress", verifyLogin, (req, res) => {
+  let userLog = req.session.user;
   userHelpers.addAddressUser(req.body, userLog._id).then(() => {
-     res.redirect('/user-profile')
-  })
-
-
-})
+    res.redirect("/user-profile");
+  });
+});
 
 router.get("/logout", (req, res) => {
   req.session.loggedIn = null;
@@ -333,15 +331,17 @@ router.get("/view-order-details/:id", verifyLogin, async (req, res) => {
     });
 });
 
-router.post("/user-cancel-order", (req, res) => {
+router.post("/user-cancel-order", verifyLogin,async(req, res) => {
+  let userLog= req.session.user
   userHelpers
     .cancelOrderStatus(req.body.order, req.body.status)
     .then((response) => {
       res.json(response);
     })
-    .catch(() => {
-      res.render("user/404", { userHead: true });
-    });
+    if(req.body.paymentMethod != 'COD'){
+      await userHelpers.cancelAmountWallet(userLog._id, req.body.total)
+      await userHelpers.updateWalletCredit(userLog._id, req.body.orderId, req.body.total, 'Product Cancelled')
+    }
 });
 
 router.post("/return-order", (req, res) => {
@@ -429,7 +429,7 @@ router.get("/checkout", verifyLogin, verifyCartCount, async (req, res) => {
   let userLog = req.session.user;
   let cartCount = req.session.cartCount;
   let total = await cartHelpers.getTotalAmount(userLog._id);
-  userHelpers.getAddress(userLog._id).then((address) => {
+  userHelpers.getUserAddress(userLog._id).then((address) => {
     res.render("user/checkout", {
       address,
       total,
@@ -440,6 +440,21 @@ router.get("/checkout", verifyLogin, verifyCartCount, async (req, res) => {
   });
 });
 
+router.post(
+  "/fetch-single-address",
+  verifyLogin,
+  verifyCartCount,
+  (req, res) => {
+    let index = parseInt(req.body.index);
+    let userLog = req.session.user;
+    console.log(index);
+    userHelpers.getSingleAddress(index, userLog._id).then((address) => {
+      console.log(address);
+      res.json(address);
+    });
+  }
+);
+
 //add address checkout
 router.post("/add-address", (req, res) => {
   let userLog = req.session.user;
@@ -448,9 +463,9 @@ router.post("/add-address", (req, res) => {
   });
 });
 
-router.post("/checkout", (req, res) => {
-  req.session.addressIndex = parseInt(req.body.address);
-  console.log(req.session.addressIndex);
+router.post("/checkout", verifyLogin, verifyCartCount, (req, res) => {
+  req.body.name = req.session.user.username;
+  req.session.checkoutAddress = req.body;
   res.redirect("/place-order");
 });
 
@@ -459,6 +474,8 @@ router.get("/place-order", verifyLogin, verifyCartCount, async (req, res) => {
   let userLog = req.session.user;
   let cartCount = req.session.cartCount;
   let total = await cartHelpers.getTotalAmount(userLog._id);
+  let wallet = await userHelpers.getWallet(userLog._id);
+  req.session.walletBalance = wallet.wallet;
   if (req.session.couponedAmount) {
     total = req.session.couponedAmount.grandtotal;
   }
@@ -466,16 +483,15 @@ router.get("/place-order", verifyLogin, verifyCartCount, async (req, res) => {
     total,
     userLog,
     cartCount,
+    wallet,
     userHead: true,
   });
 });
 
-router.post("/place-order", async (req, res) => {
+router.post("/place-order", verifyLogin, async (req, res) => {
   let userLog = req.session.user;
-  let deliveryAddress = await userHelpers.getAddress_PlaceOrder(
-    userLog._id,
-    req.session.addressIndex
-  );
+  let deliveryAddress = req.session.checkoutAddress;
+  let walletBalance = req.session?.walletBalance;
   let products = await cartHelpers.getCartProductList(userLog._id);
   let totalPrice = await cartHelpers.getTotalAmount(userLog._id);
   let discount;
@@ -486,6 +502,8 @@ router.post("/place-order", async (req, res) => {
     req.session.couponedAmount = null;
   }
   req.session.total = totalPrice;
+  req.session.checkoutAddress = null;
+  req.session.walletBalance = null;
   userHelpers
     .placeOrder(
       products,
@@ -499,6 +517,7 @@ router.post("/place-order", async (req, res) => {
       req.session.orderId = response.insertedId.toString();
       if (req.body["method"] == "COD") {
         res.json({ cod: true });
+        userHelpers.clearCart(userLog._id);
       } else if (req.body["method"] == "razorpay") {
         userHelpers
           .generateRazorPay(req.session.orderId, totalPrice)
@@ -516,9 +535,40 @@ router.post("/place-order", async (req, res) => {
               res.json(data);
             });
         });
+      } else if (req.body["method"] == "wallet") {
+        if (walletBalance < totalPrice) {
+          res.json({ walletLow: true });
+        } else {
+          walletBalance = walletBalance - totalPrice;
+          userHelpers.updateWallet(
+            userLog._id,
+            walletBalance,
+            req.session.orderId,
+            totalPrice
+          );
+          userHelpers.clearCart(userLog._id);
+          userHelpers
+            .changePaymentStatus(req.session.orderId)
+            .then(() => {
+              res.json({ walletSuccess: true });
+            });
+        }
       }
     });
 });
+
+//wallet history
+router.get('/show-wallet', verifyLogin, async (req, res) => {
+  let userLog = req.session.user
+  let cartCount = req.session.cartCount
+  try {
+    let walletDetails = await userHelpers.getWallet(userLog._id)
+    walletDetails = walletDetails.walletHistory.reverse()
+    res.render('user/show-wallet', { userHead: true, walletDetails,userLog, cartCount })
+  } catch (error) {
+    console.log(error);
+  }
+})
 
 //razorpay verify Amount
 
@@ -528,6 +578,7 @@ router.post("/verify-payment", verifyLogin, (req, res) => {
       .changePaymentStatus(req.body["order[receipt]"])
       .then(() => {
         res.json({ razor: true });
+        userHelpers.clearCart(req.session.user._id);
       })
       .catch((err) => {
         console.log(err);
@@ -570,6 +621,7 @@ router.get("/success", verifyLogin, (req, res) => {
       }
     );
   });
+  userHelpers.clearCart(req.session.user._id);
 });
 
 router.get("/cancel", verifyLogin, (req, res) => {

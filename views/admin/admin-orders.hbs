@@ -26,9 +26,10 @@
                     {{#each Items}}
                       <tr>
                         <td> {{this.dateShort}} </td>
-                        <td>{{this.address.address}}
-                          <br />{{this.address.state}},
-                          {{this.address.pincode}}
+                        <td>{{this.address.name}} <br/>
+                          {{this.address.Housename}}
+                          <br />{{this.address.Streetname}},
+                          {{this.address.Pin}}
                         </td>
                         <td>{{this.paymentMethod}} </td>
                         <td>{{this.paymentstatus}} </td>

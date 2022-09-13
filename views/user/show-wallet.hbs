@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card m-b-30">
+                <div class="card-body">
+                    <h4 class="mt-0 header-title mb-4 text-center">WALLET HISTORY</h4>
+                     {{#if walletDetails}}
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Index</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Order</th>
+                                    <th scope="col">Action</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each walletDetails}}
+                                <tr>
+                                    <td>{{inc @index}}</td>
+                                    <td style="width: 200px">{{this.date1}}</td>
+                                    <td>{{this.order}}</td>
+                                    <td>{{this.action}}</td>
+                                    <td>{{this.amount}}</td>
+                                    <td>{{this.status}}</td>
+                                </tr>
+                                {{/each}}
+                                <hr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {{else}}
+                    <h5 class="text-center">No Transactions Occured</h5><br>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
