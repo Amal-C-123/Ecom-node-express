@@ -17,7 +17,7 @@
                       <form
                         action="/admin/edit-banner/{{banner._id}}"
                         method="post"
-                        {{!-- enctype="multipart/form-data" --}}
+                        enctype="multipart/form-data"
                       >
                         <label>Name</label>
                         <input
@@ -45,13 +45,13 @@
                           placeholder="{{banner.description}}"
                         />
                         <br />
-                        {{!-- <label>Image</label>
+                        <label>Image</label>
                         <input
                           type="file"
                           name="Images"
                           class="form-control"
                           multiple
-                        /> --}}
+                        />
                         
                         <button
                           type="submit"

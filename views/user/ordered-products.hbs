@@ -7,10 +7,13 @@
             <h5 class="text-muted mb-0">Thanks for your Order, <span style="color: rgb(252, 123, 49);">{{userLog.username}}</span>!</h5>
           </div>
           <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              {{!-- <p class="lead fw-normal mb-0" style="color: #a8729a;">Receipt</p>
-              <p class="small text-muted mb-0">Receipt Voucher : 1KAU9-84UIL</p> --}}
+            {{#if orders.delivered}}
+            <div class="d-flex justify-content-end align-items-center mb-4">
+              <button class="btn btn-secondary btn-sm" onclick="downloadInvoice('{{orders._id}}')"><svg xmlns="http://www.w3.org/2000/svg" 
+              style="height: 1rem; margin:0 0.3rem;" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zM432 456c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg> Invoice</button>
             </div>
+            {{else}}
+            {{/if}}
             {{#each products}}
             <div class="card shadow-0 border mb-4">
               <div class="card-body">
@@ -57,3 +60,28 @@
     </div>
   </div>
 </section>
+<script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+<script>
+  function downloadInvoice(id){
+    var data;
+         $.ajax({
+            url: '/invoice',
+            method: 'post',
+            data:{
+              orderId: id
+            },
+
+            success: (response) => {
+                if(response.invoice){
+                  data= response.invoice
+                  easyinvoice.createInvoice(data, function (result) {
+        console.log('PDF base64 string: ', result.pdf);
+        easyinvoice.download('myInvoice.pdf', result.pdf);
+    });
+                }
+            }
+        })   
+
+        
+  }
+</script>

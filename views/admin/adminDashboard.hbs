@@ -25,7 +25,7 @@
                         <div class="col-sm-6 col-xl-3">
                             <div class="card ">
                                 <div class="card-heading p-2">
-                                    <div class="mini-stat-icon float-right">
+                                    <div class="mini-stat-icon float-right" >
                                         <i class="mdi mdi-cube-outline bg-primary  text-white"></i>
                                     </div>
                                     <div>
@@ -143,7 +143,7 @@
             data: {
                 labels: ['Jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul','aug','sep','oct','nov','dec'],
                 datasets: [{
-                    label: 'Monthly Sales Report {{yearValue}}',
+                    label: 'Monthly Sales Report {{currentYear}}',
                     data: [{{chartData}}],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
@@ -180,10 +180,10 @@
         const myChart1 = new Chart(ctx1, {
             type: 'bar',
             data: {
-                labels: ["RAZOR-PAY", "PAYPAL","COD","WALLET"],
+                labels: ["COD","WALLET","RAZOR-PAY","PAYPAL"],
                 datasets: [{
                     label: 'PAYMENT METHOD',
-                    data: [{{razorpay.[0].count}}, {{paypal.[0].count}}, {{cod.[0].count}}, {{wallet.[0].count}}],
+                    data: [ {{cod.[0].count}}, {{wallet.[0].count}},{{razorpay.[0].count}}, {{paypal.[0].count}}],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -226,7 +226,11 @@
             },
             method: "post",
             success: (response) => {
+                console.log(response)
+                if(response.status){
+
                 location.reload();
+                }
             },
         });
     }

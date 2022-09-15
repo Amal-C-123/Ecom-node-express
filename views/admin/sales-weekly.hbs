@@ -1,0 +1,78 @@
+<div class="content-page">
+  <!-- Start content -->
+  <div class="content">
+    <div class="container-fluid">
+
+      <h4 class="page-title text-center">Weekly Sales Report-{{currentYear}}</h4>
+    <div class="col-md-2">
+            <select id="inputYear" class="form-control" onchange="changeYear()">
+                <option selected>Choose year...</option>
+                {{#each listedYears}}
+                <option>{{this.year}}</option>
+                {{/each}}
+            </select>
+    </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card m-b-30">
+            <div class="card-body">
+                <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap"
+                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Weeks in {{weeklySalesReport.[0].year}}</th>
+                            {{#each weeklySalesReport}}
+                            <th>week {{this.week}}</th>
+                            {{/each}}
+                           
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>Revenue</td>
+                            {{#each weeklySalesReport}}
+                            <td>{{this.grandTotal}}</td>
+                            {{/each}}
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
+
+
+    </div>
+    <!-- container-fluid -->
+
+  </div>
+  <!-- content -->
+
+  <footer class="footer">
+    <span class="d-none d-sm-inline-block"> Cozmo Admin Panel </span>
+  </footer>
+
+</div>
+
+<script>
+     function changeYear() {
+            let year= document.getElementById('inputYear').value
+                        console.log("changeYear",year)
+                        year=parseInt(year)
+
+        $.ajax({
+            url: "/admin/change-year",
+            data: {
+                year: year,
+            },
+            method: "post",
+            success: (response) => {
+                location.reload();
+            },
+        });
+    }
+</script>

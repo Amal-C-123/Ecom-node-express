@@ -248,17 +248,25 @@ module.exports = {
             ]).toArray()
             console.log(total);
             let total1 = total[0].total
-            if (total1 >= couponcode.lowercap && total1 <= couponcode.uppercap) {
-              response.discountamount = (couponcode.percentage * total1) / 100
-              response.grandtotal = total1 - response.discountamount
-              response.coupon = true
-              console.log("discount", response.discountamount);
-              console.log("grandtotal", response.grandtotal);
-              resolve(response)
-            } else{
-              response.small = true
-              resolve(response)
-            }
+
+         //temp
+         response.discountamount = (couponcode.percentage * total1) / 100
+         response.grandtotal = total1 - response.discountamount
+         response.coupon = true
+         resolve(response)
+         //
+
+            // if (total1 >= couponcode.lowercap && total1 <= couponcode.uppercap) {    
+            //   response.discountamount = (couponcode.percentage * total1) / 100
+            //   response.grandtotal = total1 - response.discountamount
+            //   response.coupon = true
+            //   console.log("discount", response.discountamount);
+            //   console.log("grandtotal", response.grandtotal);
+            //   resolve(response)
+            // } else{
+            //   response.small = true
+            //   resolve(response)
+            // }
           }else{
             response.expired = true
             console.log('coupon expired');

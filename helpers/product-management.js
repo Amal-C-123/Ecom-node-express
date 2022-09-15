@@ -103,10 +103,261 @@ module.exports = {
     });
   },
 
-  // getChartData: (year) => {
-  //   year= parseInt(year)
+  getChartData: async (year) => {
+    year = parseInt(year);
+    let data = await db
+      .get()
+      .collection(collection.ORDER_COLLECTION)
+      .aggregate([
+        {
+          $match: { cancel: false },
+        },
+        {
+          $group: {
+            _id: {
+              truncatedOrderDate: {
+                $dateTrunc: {
+                  date: "$date",
+                  unit: "month",
+                  binSize: 1,
+                },
+              },
+            },
+            sumQuantity: {
+              $sum: "$totalAmount",
+            },
+          },
+        },
+        {
+          $project: {
+            month: {
+              $month: "$_id.truncatedOrderDate",
+            },
+            year: { $year: "$_id.truncatedOrderDate" },
+            sumQuantity: 1,
+          },
+        },
+        {
+          $match: {
+            year: year,
+          },
+        },
+        {
+          $sort: {
+            month: 1,
+          },
+        },
+      ])
+      .toArray();
 
-  // },
+    if (data.length < 12) {
+      for (let i = 1; i <= 12; i++) {
+        let datain = true;
+        for (let j = 0; j < data.length; j++) {
+          if (data[j].month === i) {
+            datain = null;
+          }
+        }
+
+        if (datain) {
+          data.push({ sumQuantity: 0, month: i });
+        }
+      }
+    }
+
+    data.sort(function (a, b) {
+      return a.month - b.month;
+    });
+    console.log("data llllllllllllllllllll", data);
+    let linChartData = [];
+    data.map((element) => {
+      let a = element.sumQuantity;
+      linChartData.push(a);
+    });
+
+    return linChartData;
+  },
+
+  getYear: () => {
+    return new Promise(async (resolve, reject) => {
+      let listedYears = await db
+        .get()
+        .collection(collection.ORDER_COLLECTION)
+        .aggregate([
+          {
+            $group: { _id: { year: { $year: "$date" } } },
+          },
+          {
+            $project: { year: "$_id.year", _id: 0 },
+          },
+          {
+            $sort: { year: -1 },
+          },
+        ])
+        .toArray();
+      console.log("listedYears", listedYears);
+      resolve(listedYears);
+    });
+  },
+
+  getYearlySalesReport: async () => {
+    let report = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+        {
+            $match: {
+                cancel: false
+            }
+        }, 
+        {
+            $group: {
+                _id: {
+                    truncatedOrderDate: {
+                        $dateTrunc: {
+                            date: "$date",
+                            unit: "year",
+                            binSize: 1
+                        }
+                    }
+                },
+                grandTotal: {
+                    $sum: "$totalAmount"
+                }
+            }
+        },
+        {
+            $project: {
+                year: {
+                    $year: "$_id.truncatedOrderDate"
+                },
+                grandTotal:1
+            }
+        },
+        {
+            $sort: {
+                year: -1 
+            }
+        }
+    ]).toArray()
+    return report;
+},
+
+getWeeklySalesReport: async (yearValue) => {
+  yearValue=parseInt(yearValue)
+  let report = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+      {
+          $match: {
+              cancel: false
+          }
+      }, 
+      {
+          $group: {
+              _id: {
+                  truncatedOrderDate: {
+                      $dateTrunc: {
+                          date: "$date",
+                          unit: "week",
+                          binSize: 1
+                      }
+                  }
+              },
+              grandTotal: {
+                  $sum: "$totalAmount"
+              }
+          }
+      },
+      {
+          $project: {
+              year: {
+                  $year: "$_id.truncatedOrderDate"
+              },
+              week: {
+                  $week: "$_id.truncatedOrderDate"
+              },
+              grandTotal:1
+          }
+      },
+      {
+          $match:{
+              year:yearValue
+          }
+      },
+      {
+          $sort: {
+              week: 1 
+          }
+      }
+  ]).toArray()
+  return report;
+},
+
+  getMonthlySalesReport: async (yearValue) => {
+    yearValue = parseInt(yearValue);
+    let report = await db
+      .get()
+      .collection(collection.ORDER_COLLECTION)
+      .aggregate([
+        {
+          $match: {
+            cancel: false,
+          },
+        },
+        {
+          $group: {
+            _id: {
+              truncatedOrderDate: {
+                $dateTrunc: {
+                  date: "$date",
+                  unit: "month",
+                  binSize: 1,
+                },
+              },
+            },
+            grandTotal: {
+              $sum: "$totalAmount",
+            },
+          },
+        },
+        {
+          $project: {
+            month: {
+              $month: "$_id.truncatedOrderDate",
+            },
+            year: { $year: "$_id.truncatedOrderDate" },
+            grandTotal: 1,
+          },
+        },
+        {
+          $match: {
+            year: yearValue,
+          },
+        },
+        {
+          $sort: {
+            month: 1,
+          },
+        },
+      ])
+      .toArray();
+  
+    if (report.length < 12) {
+      for (let i = 1; i <= 12; i++) {
+        let datain = true;
+        for (let j = 0; j < report.length; j++) {
+          if (report[j].month === i) {
+            datain = null;
+          }
+        }
+        if (datain) {
+          report.push({ grandTotal: 0, month: i });
+        }
+      }
+    }
+    await report.sort(function (a, b) {
+      return a.month - b.month;
+    });
+    return report;
+  },
+
+
 
   getAllBanner: () => {
     return new Promise(async (resolve, reject) => {
@@ -141,6 +392,7 @@ module.exports = {
               Name: body.Name,
               text: body.bannerText,
               description: body.description,
+              Images: body.Images,
             },
           }
         );
@@ -415,8 +667,6 @@ module.exports = {
   //ADD-PRODUCT
   addItem: (body) => {
     console.log(body);
-    // Stock=parseInt(body.Stock)
-    body.Stock = Stock;
     return new Promise(async (resolve, reject) => {
       let Category = await db
         .get()
@@ -427,9 +677,7 @@ module.exports = {
         name: body.name,
         category: body.category,
         categoryId: objectId(Category._id),
-        Stock: body.Stock,
         price: body.price,
-        Cutprice: body.Cutprice,
         description: body.description,
         Image: body.Image,
         discountpercentage: ["5"],

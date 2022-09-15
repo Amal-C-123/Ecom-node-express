@@ -64,18 +64,65 @@ router.get("/admin-dashboard", verifyLogin, async (req, res) => {
   let paypal = await itemHelpers.getPaymentMethodNums('paypal')
   let wallet = await itemHelpers.getPaymentMethodNums('wallet')
   let chartData= await itemHelpers.getChartData(currentYear)
+  let listedYears= await itemHelpers.getYear()
+  let monthlySalesReport= await itemHelpers.getMonthlySalesReport(currentYear)
   res.render("admin/adminDashboard", {
     admin: true,
     userCount,
     productCount,
     ordersCount,
     totalRevenue,
+    chartData,
+    currentYear,
+    listedYears,
     cod,
     razorpay,
     paypal,
     wallet
   });
 });
+
+router.post('/change-year',(req,res)=>{
+  let response={}
+  try{
+    yearValue=req.body.year
+    currentYear= yearValue
+  console.log("yearValuechange",yearValue);
+  response.status=true
+  res.json(response)
+  }catch(error){
+    console.log(error); 
+  }
+})
+
+router.get('/sales-yearly',async(req,res)=>{
+  try{
+    let yearlySalesReport= await itemHelpers.getYearlySalesReport()
+  res.render('admin/sales-yearly',{admin: true,yearlySalesReport,currentYear})
+  }catch(error){
+    console.log(error); 
+  }
+})
+
+router.get('/sales-monthly',async(req,res)=>{
+  try{
+    let monthlySalesReport= await itemHelpers.getMonthlySalesReport(currentYear )
+  let listedYears= await itemHelpers.getYear()
+  res.render('admin/sales-monthly',{admin: true,monthlySalesReport,listedYears,currentYear})
+  }catch(error){
+    console.log(error); 
+  }
+})
+
+router.get('/sales-weekly',async(req,res)=>{
+  try{
+    let weeklySalesReport= await itemHelpers.getWeeklySalesReport(currentYear)
+  let listedYears= await itemHelpers.getYear()
+  res.render('admin/sales-weekly',{admin: true,weeklySalesReport,listedYears,currentYear})
+  }catch(error){
+    console.log(error); 
+  }
+})
 
 //users
 router.get("/view-users", verifyLogin, (req, res) => {
@@ -210,7 +257,11 @@ router.get("/edit-banner/:id", verifyLogin, async (req, res) => {
   res.render("admin/edit-banner", { admin: true, banner });
 });
 
-router.post("/edit-banner/:id", verifyLogin, async (req, res) => {
+router.post("/edit-banner/:id", store.array('Images'), verifyLogin, async (req, res) => {
+  var filenames = req.files.map(function (file) {
+    return file.filename;
+  });
+  req.body.Images = filenames;
   itemHelpers.updateBanner(req.params.id, req.body).then(() => {
     res.redirect("/admin/show-banner");
   });

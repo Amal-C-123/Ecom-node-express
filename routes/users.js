@@ -331,6 +331,22 @@ router.get("/view-order-details/:id", verifyLogin, async (req, res) => {
     });
 });
 
+router.post('/invoice', async (req, res) => {
+  let userLog = req.session.user
+  let orderId = req.body.orderId
+  let response={}
+  try {
+    let products = await userHelpers.getOrderedProducts(orderId)
+    let orders =  await userHelpers.getOrderDetails(orderId);
+    let invoice = await userHelpers.generateInvoice(products, orders, userLog)
+    console.log(invoice);
+    response.invoice= invoice
+    res.json(response)
+  } catch (error) {
+    console.log(error);
+  }
+})
+
 router.post("/user-cancel-order", verifyLogin,async(req, res) => {
   let userLog= req.session.user
   userHelpers
@@ -384,11 +400,13 @@ router.post("/coupon", verifyLogin, async (req, res) => {
       console.log("coupon already used");
       amount.used = true;
       res.json(amount);
-    } else if (response.small) {
+    } 
+    else if (response.small) {
       console.log("Not within Cap limits");
       amount.small = true;
       res.json(amount);
-    } else if (response.expired) {
+    }
+     else if (response.expired) {
       console.log("Coupon expired");
       amount.expired = true;
       res.json(amount);
@@ -522,7 +540,7 @@ router.post("/place-order", verifyLogin, async (req, res) => {
         userHelpers
           .generateRazorPay(req.session.orderId, totalPrice)
           .then((order) => {
-            // console.log(order)
+          
             order.razorpay = true;
             res.json(order);
           });
