@@ -22,6 +22,17 @@ module.exports = {
     });
   },
 
+  wishListProducts: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      let wishArray = await db
+        .get()
+        .collection(collection.WISHLIST_COLLECTION)
+        .findOne({ userId: objectId(userId) });
+        wishArray = wishArray?.products
+        resolve(wishArray)
+    });
+  },
+
   getUserCount: () => {
     return new Promise(async (resolve, reject) => {
       let userCount = await db
@@ -201,93 +212,101 @@ module.exports = {
   },
 
   getYearlySalesReport: async () => {
-    let report = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
+    let report = await db
+      .get()
+      .collection(collection.ORDER_COLLECTION)
+      .aggregate([
         {
-            $match: {
-                cancel: false
-            }
-        }, 
-        {
-            $group: {
-                _id: {
-                    truncatedOrderDate: {
-                        $dateTrunc: {
-                            date: "$date",
-                            unit: "year",
-                            binSize: 1
-                        }
-                    }
-                },
-                grandTotal: {
-                    $sum: "$totalAmount"
-                }
-            }
-        },
-        {
-            $project: {
-                year: {
-                    $year: "$_id.truncatedOrderDate"
-                },
-                grandTotal:1
-            }
-        },
-        {
-            $sort: {
-                year: -1 
-            }
-        }
-    ]).toArray()
-    return report;
-},
-
-getWeeklySalesReport: async (yearValue) => {
-  yearValue=parseInt(yearValue)
-  let report = await db.get().collection(collection.ORDER_COLLECTION).aggregate([
-      {
           $match: {
-              cancel: false
-          }
-      }, 
-      {
+            cancel: false,
+          },
+        },
+        {
           $group: {
-              _id: {
-                  truncatedOrderDate: {
-                      $dateTrunc: {
-                          date: "$date",
-                          unit: "week",
-                          binSize: 1
-                      }
-                  }
+            _id: {
+              truncatedOrderDate: {
+                $dateTrunc: {
+                  date: "$date",
+                  unit: "year",
+                  binSize: 1,
+                },
               },
-              grandTotal: {
-                  $sum: "$totalAmount"
-              }
-          }
-      },
-      {
+            },
+            grandTotal: {
+              $sum: "$totalAmount",
+            },
+          },
+        },
+        {
           $project: {
-              year: {
-                  $year: "$_id.truncatedOrderDate"
-              },
-              week: {
-                  $week: "$_id.truncatedOrderDate"
-              },
-              grandTotal:1
-          }
-      },
-      {
-          $match:{
-              year:yearValue
-          }
-      },
-      {
+            year: {
+              $year: "$_id.truncatedOrderDate",
+            },
+            grandTotal: 1,
+          },
+        },
+        {
           $sort: {
-              week: 1 
-          }
-      }
-  ]).toArray()
-  return report;
-},
+            year: -1,
+          },
+        },
+      ])
+      .toArray();
+    return report;
+  },
+
+  getWeeklySalesReport: async (yearValue) => {
+    yearValue = parseInt(yearValue);
+    let report = await db
+      .get()
+      .collection(collection.ORDER_COLLECTION)
+      .aggregate([
+        {
+          $match: {
+            cancel: false,
+          },
+        },
+        {
+          $group: {
+            _id: {
+              truncatedOrderDate: {
+                $dateTrunc: {
+                  date: "$date",
+                  unit: "week",
+                  binSize: 1,
+                },
+              },
+            },
+            grandTotal: {
+              $sum: "$totalAmount",
+            },
+          },
+        },
+        {
+          $project: {
+            year: {
+              $year: "$_id.truncatedOrderDate",
+            },
+            week: {
+              $week: "$_id.truncatedOrderDate",
+            },
+            grandTotal: 1,
+          },
+        },
+        {
+          $match: {
+            year: yearValue,
+          },
+        },
+        {
+          $sort: {
+            week: 1,
+          },
+        },
+      ])
+      .toArray();
+    return report;
+  },
 
   getMonthlySalesReport: async (yearValue) => {
     yearValue = parseInt(yearValue);
@@ -337,7 +356,7 @@ getWeeklySalesReport: async (yearValue) => {
         },
       ])
       .toArray();
-  
+
     if (report.length < 12) {
       for (let i = 1; i <= 12; i++) {
         let datain = true;
@@ -356,8 +375,6 @@ getWeeklySalesReport: async (yearValue) => {
     });
     return report;
   },
-
-
 
   getAllBanner: () => {
     return new Promise(async (resolve, reject) => {
@@ -575,6 +592,7 @@ getWeeklySalesReport: async (yearValue) => {
                 offername: prod.Categoryoffername,
                 discountprice: discount,
                 discountpercentage: prod.Categorypercentage,
+                categoryOffer: true,
               },
             }
           );
@@ -640,6 +658,7 @@ getWeeklySalesReport: async (yearValue) => {
                 offername: prod.Categoryoffername,
                 discountprice: discount1,
                 discountpercentage: [defaultpercentage],
+                categoryOffer:false
               },
             }
           );
@@ -655,7 +674,7 @@ getWeeklySalesReport: async (yearValue) => {
           { _id: objectId(catId) },
           {
             $set: {
-              offer: newOffer,
+              offer: newOffer, 
             },
           }
         );

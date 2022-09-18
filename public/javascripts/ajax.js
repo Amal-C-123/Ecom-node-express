@@ -11,9 +11,9 @@ function addToCart(proId) {
         let count = $("#cart-count").html();
         count = parseInt(count) + 1;
         $("#cart-count").html(count);
-        swal('Item Added to Cart')
+        swal('Item Added to Cart',{button:false, timer:900})
       }else if(response.alertOnly){
-        swal('Item Added to Cart')
+        swal('Item Added to Cart',{button:false, timer:900})
       }
       else{
          window.location.href='/user-orders-list'
@@ -27,6 +27,24 @@ function addToCart(proId) {
     })
     .catch((e) => console.log("header.hbs error"));
 }
+
+function deleteCartProduct(proId, cartId){
+  $.ajax({
+    url: '/delete-cart-product',
+    data: {
+      productId:proId,
+      cartId: cartId
+    },
+    method: 'post',
+    success: (response)=>{
+      swal('Product removed from cart',{button:false, timer:900}).then(()=>{
+
+        location.reload()
+      })
+    }
+  })
+
+} 
 
 function changeQuantity(cartId, proId, count, dummy) {
   event.preventDefault();
@@ -44,7 +62,7 @@ function changeQuantity(cartId, proId, count, dummy) {
     success: (response) => {
       if (response.removeProduct) {
         // alert("Product Removed from cart");
-        swal("Product removed from the cart").then(() => {
+        swal('Product removed from cart',{button:false, timer:900}).then(() => {
           location.reload();
         });
       } else {
@@ -55,6 +73,8 @@ function changeQuantity(cartId, proId, count, dummy) {
     },
   });
 }
+
+
 
 function fetchAddress(index){
  let houseName= document.getElementById('address')
@@ -78,3 +98,37 @@ function fetchAddress(index){
 
 }
 
+function addToWishlist(proId, name) {
+  $.ajax({
+    url: "/add-to-wishlist/" + proId,
+    method: "get",
+    success: (response) => {
+      if (response.removed) {
+        document.getElementById("wishIcon" + proId).className =
+          "pe-7s-like icon";
+        swal(name +' removed from wishlist',{button:false, timer:900})
+      } else if (response.added) {
+        swal(name +' Added to wishList',{button:false, timer:600})
+        document.getElementById("wishIcon" + proId).className = "fa fa-heart";
+      } else {
+        window.location.href = "/user-orders-list";
+      }
+    },
+  });
+}
+
+function removeWishlist(proId, name) {
+  $.ajax({
+    url: "/add-to-wishlist/" + proId,
+    method: "get",
+    success: (response) => {
+      if (response.removed) {
+        // swal({ text: name + " removed from wishlist", dangerMode: true });
+        swal(name +' removed from wishList',{button:false, timer:800}).then(()=>{
+          location.reload()
+        })
+        
+      }
+    },
+  });
+}

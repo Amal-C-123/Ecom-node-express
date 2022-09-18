@@ -1,0 +1,77 @@
+.imgWidth{
+    width: 5rem;
+    height: 5rem;
+    border-radius: 25px;
+}
+.table-responsive{   /*cart table*/
+    width: 91%;
+    margin: 0 auto;
+}
+
+.wishlistP{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.wishListHeart{
+    background: none;
+	color: red;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+    margin-right: 0.5rem;
+}
+.buttonmod{
+    background: none;
+    border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+    font-size: 20px;
+}
+
+.boxShadow{
+    -webkit-box-shadow: 2px 2px 10px 2px #4A4A4A;
+box-shadow: 2px 2px 10px 2px #4A4A4A;
+}
+
+.centerAlign{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.borderm{
+    border: 2px solid rgba(40, 40, 40, 0.158);
+}
+
+.swal-overlay {
+    background-color: rgba(253, 193, 141, 0.244);
+  }
+
+  .swal-modal {
+    background-color: #eb3e32;
+    border: 1px solid white;
+    border-radius: 15px;
+  }
+
+  .swal-text {
+    display: block;
+    /* margin: 22px; */
+    text-align: center;
+    color: white;
+  }
+
+  .swal-button {
+    padding: 7px 19px;
+    border-radius: 2px;
+    background-color: #eb3e32;
+    font-size: 12px;
+    border: 2px solid white;
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+  }

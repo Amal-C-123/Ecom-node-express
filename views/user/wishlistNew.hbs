@@ -1,0 +1,102 @@
+<main class="main-content">
+
+  <!--== Start Blog Area Wrapper ==-->
+  <section class="shopping-cart-area">
+    
+          <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="shopping-cart-content">
+                                        {{!-- <form action="#"> --}}
+
+                                            {{!-- {{#if products}} --}}
+                                            {{!-- {{else}} --}}
+                                            {{!-- <h3 class="text-center">Wishlist is empty</h3><br> --}}
+                                            {{!-- {{/if}} --}}
+                                            {{!-- {{#if products}} --}}
+                                            <div class="table-content table-responsive mb-50">
+                                                <table class="text-center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="product-thumbnail">product</th>
+                                                            <th class="product-price">price</th>
+                                                            {{!-- <th class="product-quantity">Quantity</th> --}}
+                                                            {{!-- <th class="product-subtotal">total</th> --}}
+                                                            <th class="product-remove">action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!-- tr -->
+                                                        {{#each products}}
+                                                        <tr>
+                                                            <td class="product-thumbnail">
+                                                                <div class="pro-thumbnail-img">
+                                                                    <img src="/product-images/{{this.product.Images.[0]}}"
+                                                                        alt="">
+                                                                </div>
+                                                                <div class="pro-thumbnail-info text-left">
+                                                                    <h6 class="product-title-2">
+                                                                        <a href="/product-view/{{this.product._id}}">{{this.product.Name}}</a>
+                                                                    </h6>
+
+                                                                    <p>Brand: {{this.Brands}}</p>
+
+                                                                </div>
+                                                            </td>
+                                                            <td class="product-price">₹{{this.product.Price}}</td>
+
+                                                            {{!-- <td>
+                                                                <div class="d-flex justify-content-center">
+                                                                    <div><button class="cart-item-count mr-3 "
+                                                                            onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../userlog._id}}','-1')">-</button>
+                                                                    </div>
+                                                                    <div id="{{this.product._id}}">{{this.quantity}}
+                                                                    </div>
+                                                                    <div><button class="cart-item-count ml-3 "
+                                                                            onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../userlog._id}}','1')">+</button>
+                                                                    </div>
+                                                                </div>
+                                                            </td> --}}
+
+                                                            <td class="product-remove">
+                                                                <div class="d-flex justify-content-center">
+                                                                    <div>
+                                                                        <button
+                                                                            onclick="deleteWishProduct('{{this._id}}','{{this.product._id}}')"
+                                                                            class="btn btn-danger btn-md">Remove</button>
+                                                                        {{!-- <a href="/delete-cartproduct/{{this._id}}"
+                                                                            onclick="return confirm('Do you want to delete {{this.product.Name}} ?')"><i
+                                                                                class="zmdi zmdi-close"></i></a> --}}
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {{/each}}
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {{!-- {{/if}} --}}
+                                            {{!-- total and place order section start--}}
+                                            {{!-- <div class="d-flex justify-content-end">
+                                                <div>
+                                                    {{#if cartCount}}
+                                                    <h3>TOTAL: ₹ <span id="total">{{totalValue}}</span></h3><br>
+                                                    <a href="/place-order" class="btn btn-success">Place Order</a>
+                                                    {{/if}}
+
+                                                </div>
+                                            </div> --}}
+                                    </div>
+        </div>
+      </div>
+      
+    </div>
+
+
+
+    
+  </section>
+  <!--== End Blog Area Wrapper ==-->
+</main>

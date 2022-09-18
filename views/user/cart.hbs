@@ -9,9 +9,9 @@
           <div class=" table-responsive">
             
               <table class="table text-center ">
-                <thead>
+                <thead > 
                   <tr>
-                      <th class="product-name" >Product</th>  
+                      <th class="product-name " >Product</th>  
                       <th class="product-price">Name</th>
                       <th class="product-quantity">Price</th>
                       <th class="product-subtotal">Quantity</th>
@@ -20,7 +20,7 @@
                 </thead>
                 <tbody >
                   {{#each products}}
-                      <tr class="cart-product-item">
+                      <tr class="cart-product-item ">
                       
                       <td class="product-thumb">
                         <a href="single-product.html">
@@ -48,7 +48,7 @@
                       </td>
 
                       <td class="product-remove">
-                        <a href="#" onclick="deleteCartProduct('{{this.product._id}}', '{{this._id}}')"><i class="fa fa-trash-o"></i></a>
+                        <button class="buttonmod" onclick="deleteCartProduct('{{this.product._id}}', '{{this._id}}')"><i class="fa fa-trash-o"></i></button>
                       </td>
                       
                     </tr>
@@ -154,25 +154,7 @@
 </main>
 
 <script>
-    function deleteCartProduct(proId, cartId){
-      $.ajax({
-        url: '/delete-cart-product',
-        data: {
-          productId:proId,
-          cartId: cartId
-        },
-        method: 'post',
-        success: (response)=>{
-          swal('product removed from cart').then(()=>{
-            if(response.removeProduct){
-              location.reload()
-          }
-          })
-        }
-      })
-
-    }   
-
+      
     $('#coupon-form').submit((e)=>{
       e.preventDefault()
       $.ajax({

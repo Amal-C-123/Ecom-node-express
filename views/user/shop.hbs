@@ -21,16 +21,36 @@
                                 <a href="/view-product/{{this._id}}">
                                   <img src="/images/{{this.Image.[0]}}" width="270" height="274" style="width: 270px; height:274px" alt="Image-HasTech">
                                 </a>
-                              
+
+                              {{#if categoryOffer}}
+                                <div class="product-flag">
+                                  <ul>
+                                    <li class="discount">-{{this.discountpercentage.[0]}}%</li>
+                                  </ul>
+                                  </div>
+                              {{/if}}
                                 <div class="product-action">
                                   {{!-- <a class="btn-product-wishlist" href="shop-wishlist.html"><i class="fa fa-heart"></i></a> --}}
-                                  <button class="btn-product-cart" onclick="addToCart('{{this._id}}')" ><i class="fa fa-shopping-cart"></i></button>
+                                  <button class="btn-product-cart boxShadow" onclick="addToCart('{{this._id}}')" ><i class="fa fa-shopping-cart"></i></button>
                                   
                                 </div>
                                 <a class="banner-link-overlay" href="shop.html"></a>
                               </div>
                               <div class="product-info p-2 mt-0">
-                                <h4 class="title mb-1"><a href="#">{{this.name}}</a></h4>
+                                <div class="wishlistP">
+
+                                    <h4 class="title mb-1"><a href="#">{{this.name}}</a></h4>
+                                      
+                                      {{#if this.wishlist}}
+                                      <button class="wishListHeart" onclick="addToWishlist('{{this._id}}','{{this.name}}')"><i style="font-size:1.5rem;" id="wishIcon{{this._id}}" class="fa fa-heart"></i></button>
+                                        {{else}}
+                                        <button class="wishListHeart" onclick="addToWishlist('{{this._id}}','{{this.name}}')"><i style="font-size:1.5rem;" id="wishIcon{{this._id}}" class="pe-7s-like icon "></i></button>
+                                        {{/if}}
+                                    {{!-- <button class="wishListHeart"><i class="fa fa-heart"></i></button> --}}
+                                    {{!-- <a  href="#" style="margin-right: 0.5rem;" ><i style="font-size:1.5rem;" class="pe-7s-like icon"></i></a> --}}
+                                    </div>
+                                
+                                
                                 <div class="category">
                                   <ul>
                                     <li><a href="#">{{this.description}}</a></li>
@@ -64,6 +84,7 @@
               </div>
             </div>
           </div>
+          
 
           <div class="col-xl-3">
             <div class="shop-sidebar">

@@ -1,0 +1,89 @@
+<main class="main-content">
+
+  <!--== Start Blog Area Wrapper ==-->
+  <section class="shopping-cart-area">
+    
+          <div class=" mb-0">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="shopping-cart-content">
+                                        
+        <div class="table-content table-responsive  centerAlign ">
+            {{#if products}}
+            <h3 class="text-center mt-4 mb-3">WishList</h3>
+            <table class="text-center borderm w-50">
+                <thead class="borderm">
+                    <tr>
+                        <th class="product-thumbnail p-1">Product</th>
+                        <th class="product-price">Name</th>
+                        <th class="product-price">Price</th>
+                        
+                        <th class="product-remove">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- tr -->
+                    {{#each products}}
+                    <tr >
+                        <td class="product-thumbnail">
+                            <div class="pro-thumbnail-img p-1">
+                                <a href="/view-product/{{this.product._id}}">
+                                <img src="/images/{{this.product.Image.[0]}}"
+                                   class="imgWidth" alt=""> </a>
+                            </div>
+                            {{!-- <div class="pro-thumbnail-info text-left">
+                                <h6 class="product-title-2">
+                                    <a href="/product-view/{{this.product._id}}">{{this.product.name}}</a>
+                                </h6>
+
+                            </div> --}}
+                        </td>
+                        <td class="product-price">{{this.product.name}}</td>
+                        <td class="product-price">₹ {{this.product.price}}</td>
+
+                        <td class="product-remove">
+                            <div class="d-flex justify-content-center">
+                                <div>
+                                    <button
+                                        onclick="removeWishlist('{{this.product._id}}','{{this.product.name}}')"
+                                        class="btn btn-danger btn-sm">Remove</button>
+                                    
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/each}}
+
+
+                </tbody>
+            </table>
+            {{else}}
+
+            <div class="container">
+    
+                            <div class="row">
+                            <div class="col-md-12">
+                            <div class="">
+                                <div class="container text-center" style="background: rgb(231, 230, 230); border-radius:25px">
+                                    <p style="font-size: 1.5rem;">WishList is empty</p>
+                                </div>
+                                
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+            {{/if}}
+        </div>
+                                            
+         </div>
+        </div>
+      </div>
+      
+    </div>
+
+
+
+    
+  </section>
+  <!--== End Blog Area Wrapper ==-->
+</main>
