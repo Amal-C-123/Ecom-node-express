@@ -73,6 +73,12 @@
                   for="exampleInputEmail1"
                   class="form-label"
                 >Images</label>
+                <div class="mb-2" id="formImages"   style="display: none;">
+                    <img src="" id="imgview" class="imgWidth" alt="">
+                    <img src=""   id="imgview1" class="imgWidth" alt="">
+                    <img src="" id="imgview2" class="imgWidth" alt="">
+                    <img src="" id="imgview3" class="imgWidth" alt="">
+                </div>
                 <div class="mb-3">
 
                   <input
@@ -80,6 +86,7 @@
                     type="file"
                     id="formFile"
                     name="image"
+                    onchange="viewImage(event)"
                     multiple
                     required
                   />

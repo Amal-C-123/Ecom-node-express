@@ -44,9 +44,11 @@
                         <td class="product-remove">
                             <div class="d-flex justify-content-center">
                                 <div>
+
+                                    <button class="btn btn-success btn-sm btn-product-cart" onclick="addToCart('{{this.product._id}}')"><i class="fa fa-shopping-cart"></i></button>    
                                     <button
                                         onclick="removeWishlist('{{this.product._id}}','{{this.product.name}}')"
-                                        class="btn btn-danger btn-sm">Remove</button>
+                                        class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>
                                     
                                 </div>
                             </div>

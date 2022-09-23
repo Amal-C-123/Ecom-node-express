@@ -656,6 +656,7 @@ module.exports = {
       db.get()
         .collection(collection.CART_COLLECTION)
         .deleteOne({ user: objectId(userId) });
+        resolve()
     });
   },
 

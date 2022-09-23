@@ -409,6 +409,10 @@ router.get("/cart", verifyLogin, async (req, res) => {
   let userLog = req.session.user;
   let cartCount = req.session.cartCount;
   let products = await cartHelpers.getCartProducts(userLog._id);
+  products=products.map((prod)=>{
+    prod.product.subtotal= parseInt(prod.product.price) * parseInt(prod.quantity)
+    return prod 
+  })
   let total = await cartHelpers.getTotalAmount(userLog._id);
   res.render("user/cart", {
     userHead: true,
@@ -492,6 +496,7 @@ router.post("/change-product-quantity", verifyLogin, (req, res, next) => {
     if (total > 0) {
       response.total = total;
     }
+    console.log(response);
     res.json(response);
   });
 });
@@ -631,7 +636,7 @@ router.get("/show-wallet", verifyLogin, async (req, res) => {
   let cartCount = req.session.cartCount;
   try {
     let walletDetails = await userHelpers.getWallet(userLog._id);
-    walletDetails = walletDetails.walletHistory.reverse();
+    walletDetails = walletDetails?.walletHistory?.reverse();
     res.render("user/show-wallet", {
       userHead: true,
       walletDetails,
@@ -696,6 +701,13 @@ router.get("/success", verifyLogin, (req, res) => {
   });
   userHelpers.clearCart(req.session.user._id);
 });
+
+router.get('/clear-cart', verifyLogin, ((req, res)=>{
+  userHelpers.clearCart(req.session.user._id).then(()=>{
+
+    res.json({cleared:true})
+  })
+}))
 
 router.get("/cancel", verifyLogin, (req, res) => {
   res.send("Cancelled");

@@ -57,6 +57,13 @@ TABLES OF CSS
   margin: 0 auto;
 }
 
+.formImages{
+  display:flex ;
+  width: 400px;
+  justify-content: space-around;
+}
+
+
 
 body {
   background-repeat: repeat;

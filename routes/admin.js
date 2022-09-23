@@ -174,6 +174,7 @@ router.get("/product-delete/:id", verifyLogin, (req, res) => {
   });
 });
 
+
 //edit-product
 router.get("/edit-product/:id", verifyLogin, async (req, res) => {
   try {
@@ -279,7 +280,7 @@ router.get("/add-categories", verifyLogin, (req, res) => {
 });
 
 router.post("/add-category", verifyLogin, (req, res) => {
-  //let category = req.body;
+  console.log(req.body); 
   itemHelpers.addCategory(req.body);
   res.redirect("/admin/categories");
 });

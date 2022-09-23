@@ -23,7 +23,7 @@
                                         id="exampleInputEmail1"
                                         name="name"
                                         aria-describedby="emailHelp"
-                                        placeholder="{{editProductFormData.name}}"
+                                        value="{{editProductFormData.name}}"
                                     required/>
 
                                     </div>
@@ -46,7 +46,7 @@
                                     <div class="mb-3">
                                     <div class="form-floating">
                                         <label for="floatingTextarea">Description</label>
-                                        <textarea name="description" class="form-control" id="floatingTextarea" placeholder="{{editProductFormData.description}}"></textarea>
+                                        <input name="description" class="form-control" id="floatingTextarea" value="{{editProductFormData.description}}"></input>
                                     </div>
 
                                     </div>
@@ -58,16 +58,25 @@
                                         id="exampleInputEmail1"
                                         name="price"
                                         aria-describedby="emailHelp"
-                                        placeholder="{{editProductFormData.price}}"
+                                        value="{{editProductFormData.price}}"
                                     required/>
 
                                     </div>
+                                    
+                                    
 
                                     <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">Images</label>
+                                    <div class="formImages ">
+                                        <img src="/images/{{editProductFormData.Image.[0]}}" class="imgWidth" id="imgview" alt="">
+                                        <img src="/images/{{editProductFormData.Image.[1]}}" class="imgWidth" id="imgview1" alt="">
+                                        <img src="/images/{{editProductFormData.Image.[2]}}"class="imgWidth" id="imgview2" alt="">
+                                        <img src="/images/{{editProductFormData.Image.[3]}}"class="imgWidth" id="imgview3" alt="">
+                                    </div>
+
                                 <div class="mb-3">
                                 
-                                <input class="form-control" type="file" id="formFile" name="image"  multiple >
+                                <input class="form-control mt-2" type="file" id="formFile" onchange="viewImage1(event)" name="image"  multiple required>
                                 </div>
 
                                 </div>

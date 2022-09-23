@@ -15,6 +15,7 @@
                       <th class="product-price">Name</th>
                       <th class="product-quantity">Price</th>
                       <th class="product-subtotal">Quantity</th>
+                      <th class="product-subtotal">Subtotal</th>
                       <th class="product-subtotal">Action</th>
                   </tr>
                 </thead>
@@ -23,12 +24,12 @@
                       <tr class="cart-product-item ">
                       
                       <td class="product-thumb">
-                        <a href="single-product.html">
+                        <a href="/view-product/{{this.product._id}}">
                           <img src="/images/{{this.product.Image.[0]}}" class="imgWidth" width="90" height="110" alt="Image-HasTech">
                         </a>
                       </td>
                       <td class="product-name">
-                        <p class="title "><a href="single-product.html"  style="font-size:1rem; color:black">{{this.product.name}}</a></p>
+                        <p class="title "><a href="/view-product/{{this.product._id}}"  style="font-size:1rem; color:black">{{this.product.name}}</a></p>
                       </td>
                       <td class="product-price">
                         <span class="price">₹ {{this.product.price}}</span>
@@ -47,17 +48,25 @@
                         >+</button>
                       </td>
 
+                      <td class="product-name">
+                        <p class="title " id="subTotal{{this.product._id}}" style="font-size:1rem; color:black">₹ {{this.product.subtotal}}</p>
+                      </td>
                       <td class="product-remove">
-                        <button class="buttonmod" onclick="deleteCartProduct('{{this.product._id}}', '{{this._id}}')"><i class="fa fa-trash-o"></i></button>
+                        <button class="btn btn-danger btn-md" onclick="deleteCartProduct('{{this.product._id}}', '{{this._id}}')"><i class="fa fa-trash-o"></i></button>
                       </td>
                       
                     </tr>
                   {{/each}}
- 
                 </tbody>
+                
               </table>
-            
+            <div class=" mb-3 w-100 d-flex  justify-content-between ">
+            <a class="btn btn-sm btn-danger" href="/shop">Continue Shopping</a>
+            <button class="btn btn-sm btn-danger" onclick="clearCart()">Clear Cart</button>
           </div>
+          </div>
+
+          
         </div>
       </div>
       <div class="row row-gutter-50 table-responsive mt-4">

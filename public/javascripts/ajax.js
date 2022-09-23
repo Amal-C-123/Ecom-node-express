@@ -1,54 +1,63 @@
-
-
-
 function addToCart(proId) {
   $.ajax({
     url: "/add-to-cart/" + proId,
     method: "get",
     success: (response) => {
       if (response.status) {
-        
         let count = $("#cart-count").html();
         count = parseInt(count) + 1;
         $("#cart-count").html(count);
-        swal('Item Added to Cart',{button:false, timer:900})
-      }else if(response.alertOnly){
-        swal('Item Added to Cart',{button:false, timer:900})
+        swal("Item Added to Cart", { button: false, timer: 900 });
+      } else if (response.alertOnly) {
+        swal("Item Added to Cart", { button: false, timer: 900 });
+      } else {
+        window.location.href = "/user-orders-list";
       }
-      else{
-         window.location.href='/user-orders-list'
-      }
-      
     },
   })
     .done(() => {
-       
-      // window.location.href='/add-to-cart/:id'  
+      // window.location.href='/add-to-cart/:id'
     })
     .catch((e) => console.log("header.hbs error"));
 }
 
-function deleteCartProduct(proId, cartId){
+function deleteCartProduct(proId, cartId) {
   $.ajax({
-    url: '/delete-cart-product',
+    url: "/delete-cart-product",
     data: {
-      productId:proId,
-      cartId: cartId
+      productId: proId,
+      cartId: cartId,
     },
-    method: 'post',
-    success: (response)=>{
-      swal('Product removed from cart',{button:false, timer:900}).then(()=>{
+    method: "post",
+    success: (response) => {
+      swal("Product removed from cart", { button: false, timer: 900 }).then(
+        () => {
+          location.reload();
+        }
+      );
+    },
+  });
+}
 
-        location.reload()
-      })
-    }
-  })
-
-} 
+function clearCart() {
+  swal({ text: "Do you want to Clear Cart", dangerMode: true, buttons: true })
+    .then((here) => {
+      if(here){
+        $.ajax({
+          url: "/clear-cart",
+          method: "get",
+          success: (response) => {
+            location.reload();
+          },
+        });
+      }
+    });
+}
 
 function changeQuantity(cartId, proId, count, dummy) {
   event.preventDefault();
   let quantity = parseInt(document.getElementById(proId).innerHTML);
+  
   count = parseInt(count);
   $.ajax({
     url: "/change-product-quantity",
@@ -62,40 +71,41 @@ function changeQuantity(cartId, proId, count, dummy) {
     success: (response) => {
       if (response.removeProduct) {
         // alert("Product Removed from cart");
-        swal('Product removed from cart',{button:false, timer:900}).then(() => {
-          location.reload();
-        });
+        swal("Product removed from cart", { button: false, timer: 900 }).then(
+          () => {
+            location.reload();
+          }
+        );
       } else {
         document.getElementById(proId).innerHTML = quantity + count;
         document.getElementById("total").innerHTML = "₹ " + response.total;
-        document.getElementById("total-price").innerHTML = "₹ " + response.total;
+        document.getElementById('subTotal'+proId).innerHTML= "₹ "+ response.subTotal
+        document.getElementById("total-price").innerHTML =
+          "₹ " + response.total;
+          
       }
     },
   });
 }
 
-
-
-function fetchAddress(index){
- let houseName= document.getElementById('address')
- let street= document.getElementById('town')
- let state= document.getElementById('state')
- let pin= document.getElementById('pincode')
+function fetchAddress(index) {
+  let houseName = document.getElementById("address");
+  let street = document.getElementById("town");
+  let state = document.getElementById("state");
+  let pin = document.getElementById("pincode");
   $.ajax({
-    url: '/fetch-single-address',
+    url: "/fetch-single-address",
     data: {
-      index: index
+      index: index,
     },
-    method: 'post',
-    success: (address)=>{
-     
-      houseName.value= address.Housename
-      street.value= address.Streetname
-      state.value= address.State
-      pin.value= address.Pin
-    }
-  })
-
+    method: "post",
+    success: (address) => {
+      houseName.value = address.Housename;
+      street.value = address.Streetname;
+      state.value = address.State;
+      pin.value = address.Pin;
+    },
+  });
 }
 
 function addToWishlist(proId, name) {
@@ -106,9 +116,9 @@ function addToWishlist(proId, name) {
       if (response.removed) {
         document.getElementById("wishIcon" + proId).className =
           "pe-7s-like icon";
-        swal(name +' removed from wishlist',{button:false, timer:900})
+        swal(name + " removed from wishlist", { button: false, timer: 900 });
       } else if (response.added) {
-        swal(name +' Added to wishList',{button:false, timer:600})
+        swal(name + " Added to wishList", { button: false, timer: 600 });
         document.getElementById("wishIcon" + proId).className = "fa fa-heart";
       } else {
         window.location.href = "/user-orders-list";
@@ -124,10 +134,12 @@ function removeWishlist(proId, name) {
     success: (response) => {
       if (response.removed) {
         // swal({ text: name + " removed from wishlist", dangerMode: true });
-        swal(name +' removed from wishList',{button:false, timer:800}).then(()=>{
-          location.reload()
-        })
-        
+        swal(name + " removed from wishList", {
+          button: false,
+          timer: 800,
+        }).then(() => {
+          location.reload();
+        });
       }
     },
   });

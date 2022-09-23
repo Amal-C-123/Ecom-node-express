@@ -23,7 +23,7 @@
                         <input
                           type="text"
                           name="Name"
-                          placeholder="{{banner.Name}}"
+                          value="{{banner.Name}}"
                           class="form-control"
                           required
                         /><br />
@@ -32,7 +32,7 @@
                         <input
                           type="text"
                           name="bannerText"
-                          placeholder="{{banner.text}}"
+                          value="{{banner.text}}"
                           class="form-control"
                           required
                         />
@@ -42,16 +42,19 @@
                           type="text"
                           name="description"
                           class="form-control"
-                          placeholder="{{banner.description}}"
-                        />
+                          value="{{banner.description}}"
+                        required/>
                         <br />
-                        <label>Image</label>
+                        <label>Image: </label>
+
+                        <img src="/images/{{banner.Images.[0]}}" class="imgWidth" alt="">
+
                         <input
                           type="file"
                           name="Images"
                           class="form-control"
                           multiple
-                        />
+                        required/>
                         
                         <button
                           type="submit"

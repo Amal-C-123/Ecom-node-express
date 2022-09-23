@@ -66,13 +66,13 @@
     data: $("#checkout").serialize(),
     success: (response) => {
       if (response.cod) {
-        swal('Order placed successfully').then(()=>{
+        swal("Success!", "order created", "success",{button:false, timer:800}).then(()=>{
           location.href = "/user-orders-list";
         })
       }else if(response.walletLow){
           swal("Info!", "Wallet insufficient balance", "warning")
       }else if( response.walletSuccess){
-        swal('Order placed successfully').then(()=>{
+        swal("Success!", "order created", "success",{button:false, timer:800}).then(()=>{
           location.href = "/user-orders-list";
         })
       }
