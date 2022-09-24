@@ -55,16 +55,16 @@ router.get("/", (req, res) => {
 
 let currentYear= 2022
 router.get("/admin-dashboard", verifyLogin, async (req, res) => {
-  let userCount = await itemHelpers.getUserCount();
-  let productCount = await itemHelpers.getProductCount();
-  let ordersCount = await itemHelpers.getOrdersCount();
+  let userCount = await itemHelpers?.getUserCount();
+  let productCount = await itemHelpers?.getProductCount();
+  let ordersCount = await itemHelpers?.getOrdersCount();
   let totalRevenue = await itemHelpers?.getTotalRevenue();
-  let cod = await itemHelpers.getPaymentMethodNums('COD')
-  let razorpay = await itemHelpers.getPaymentMethodNums('razorpay')
-  let paypal = await itemHelpers.getPaymentMethodNums('paypal')
-  let wallet = await itemHelpers.getPaymentMethodNums('wallet')
-  let chartData= await itemHelpers.getChartData(currentYear)
-  let listedYears= await itemHelpers.getYear()
+  let cod = await itemHelpers?.getPaymentMethodNums('COD')
+  let razorpay = await itemHelpers?.getPaymentMethodNums('razorpay')
+  let paypal = await itemHelpers?.getPaymentMethodNums('paypal')
+  let wallet = await itemHelpers?.getPaymentMethodNums('wallet')
+  let chartData= await itemHelpers?.getChartData(currentYear)
+  let listedYears= await itemHelpers?.getYear()
   // let monthlySalesReport= await itemHelpers.getMonthlySalesReport(currentYear)
   res.render("admin/adminDashboard", {
     admin: true,
