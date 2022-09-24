@@ -80,7 +80,7 @@ module.exports = {
         ])
         .toArray();
 
-      resolve(totalRevenue[0].grandTotal);
+      resolve(totalRevenue[0]?.grandTotal);
     });
   },
 
