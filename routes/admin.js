@@ -65,7 +65,7 @@ router.get("/admin-dashboard", verifyLogin, async (req, res) => {
   let wallet = await itemHelpers.getPaymentMethodNums('wallet')
   let chartData= await itemHelpers.getChartData(currentYear)
   let listedYears= await itemHelpers.getYear()
-  let monthlySalesReport= await itemHelpers.getMonthlySalesReport(currentYear)
+  // let monthlySalesReport= await itemHelpers.getMonthlySalesReport(currentYear)
   res.render("admin/adminDashboard", {
     admin: true,
     userCount,
