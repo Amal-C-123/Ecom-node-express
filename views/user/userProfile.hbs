@@ -163,7 +163,7 @@
                                                     <div class="col-lg-6">
                                                         <div class="single-input-item">
                                                             <label for="first-name" class="required">Name</label>
-                                                            <input type="text" id="Name" name="Name"
+                                                            <input type="text" value="{{userLog.username}}" id="Name" name="Name"
                                                                 onkeyup="validatecName()" />
                                                                 <label class="text-danger" id="nameEr" for=""></label>
                                                         </div>
@@ -172,7 +172,7 @@
                                                         <div class="single-input-item">
                                                             
                                                             <label for="last-name" class="required">Phone</label>
-                                                            <input type="number" id="Phone" name="Phone"
+                                                            <input type="number" value="{{userLog.Phone}}" id="Phone" name="Phone"
                                                                 onkeyup="validatecPhone()" />
                                                                 <label class="text-danger" id="phoneEr" for=""></label>
                                                         </div>
@@ -182,7 +182,7 @@
                                                 <div class="single-input-item">
                                                     
                                                     <label for="email" class="required">Email Addres</label>
-                                                    <input type="email" id="Email" name="Email"
+                                                    <input type="email" value="{{userLog.Email}}" id="Email" name="Email"
                                                         onkeyup="validatecEmail()" />
                                                     <label class="text-danger" id="emailEr" for=""></label>    
                                                 </div>
