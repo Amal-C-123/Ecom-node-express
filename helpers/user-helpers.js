@@ -771,7 +771,7 @@ module.exports = {
         },
         redirect_urls: {
           return_url:  "https://www.cozmoshoes.tk/success",   
-          cancel_url: "https://www.cozmoshoes.tk/cancel" //"http://localhost:3000/cancel", // "http://localhost:3000/success",
+          cancel_url: "https://www.cozmoshoes.tk/cancel"    //"http://localhost:3000/cancel", // "http://localhost:3000/success",
         },
         transactions: [
           {
