@@ -770,8 +770,8 @@ module.exports = {
           payment_method: "paypal",
         },
         redirect_urls: {
-          return_url:  "https://www.cozmoshoes.tk",   
-          cancel_url: "https://www.cozmoshoes.tk" //"http://localhost:3000/cancel", // "http://localhost:3000/success",
+          return_url:  "https://www.cozmoshoes.tk/success",   
+          cancel_url: "https://www.cozmoshoes.tk/cancel" //"http://localhost:3000/cancel", // "http://localhost:3000/success",
         },
         transactions: [
           {
