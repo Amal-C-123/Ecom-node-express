@@ -213,7 +213,6 @@ module.exports = {
   },
 
   updateWalletCredit: (userId, orderId, totalPrice, walletAction) => {
-    console.log("hiii");
     return new Promise((resolve, reject) => {
       let walletHistory = {
         order: objectId(orderId),
@@ -418,7 +417,6 @@ module.exports = {
         let proExist = wishUserCheck.products.findIndex(
           (product) => product.item == proId
         );
-        console.log(proExist);
         if (proExist != -1) {
           db.get()
             .collection(collection.WISHLIST_COLLECTION)
@@ -500,7 +498,6 @@ module.exports = {
         .get()
         .collection(collection.ADDRESS_COLLECTION)
         .findOne({ _id: objectId(userId) });
-      console.log(Address);
       if (Address) {
         address.index = Address.addressList.length + 1;
         db.get()
@@ -561,7 +558,6 @@ module.exports = {
           },
         ])
         .toArray();
-      console.log(singleAddress[0].addressList, "mmmm");
       resolve(singleAddress[0].addressList);
     });
   },
@@ -575,7 +571,6 @@ module.exports = {
         isDecimalComma: false,
       });
       convertPrice.convert().then((response) => {
-        console.log(response);
         resolve(response);
       });
     });
@@ -770,8 +765,8 @@ module.exports = {
           payment_method: "paypal",
         },
         redirect_urls: {
-          return_url:  "http://www.cozmoshoes.tk/success",   
-          cancel_url: "http://www.cozmoshoes.tk/cancel"    //"http://localhost:3000/cancel", // "http://localhost:3000/success",
+          return_url:  "https://www.cozmoshoes.tk/success",   
+          cancel_url: "https://www.cozmoshoes.tk/cancel"    //"http://localhost:3000/cancel", // "http://localhost:3000/success",
         },
         transactions: [
           {
@@ -825,7 +820,6 @@ module.exports = {
   },
 
   changePaymentStatus: (orderId) => {
-    console.log(orderId);
     return new Promise((resolve, reject) => {
       db.get()
         .collection(collection.ORDER_COLLECTION)
@@ -844,7 +838,6 @@ module.exports = {
   },
 
   generateInvoice: (products, orders, userLog) => {
-    // console.log(products,orders,userLog);
     let data = [];
     products.map((pro) => {
       temp = {

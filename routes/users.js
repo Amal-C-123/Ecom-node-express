@@ -153,7 +153,6 @@ router.get("/user-profile", verifyLogin, async (req, res) => {
   let cartCount = req.session.cartCount;
   let walletDetails = await userHelpers.getWallet(userLog._id);
   let userAddress = await userHelpers.getUserAddress(userLog._id);
-  console.log(userAddress);
   res.render("user/userProfile", {
     userHead: true,
     userLog,
@@ -187,7 +186,6 @@ var passwordMatchEr;
 var passwordSuccess;
 router.post("/resetpassword", (req, res) => {
   let userLog = req.session.user;
-  console.log(req.body);
   if (req.body.Newpassword === req.body.Confirmpassword) {
     console.log("true");
     userHelpers
@@ -270,7 +268,6 @@ router.get("/shop", async (req, res) => {
       for (let i = 0; i < products.length; i++) {
         for (let j = 0; j < wishProducts.length; j++) {
           if (products[i]._id + "" == wishProducts[j].item + "") {
-            console.log(products[i]._id + "", wishProducts[j].item + "", i);
             products[i].wishlist = true;
           }
         }
@@ -367,7 +364,6 @@ router.post("/invoice", async (req, res) => {
     let products = await userHelpers.getOrderedProducts(orderId);
     let orders = await userHelpers.getOrderDetails(orderId);
     let invoice = await userHelpers.generateInvoice(products, orders, userLog);
-    console.log(invoice);
     response.invoice = invoice;
     res.json(response);
   } catch (error) {
@@ -427,7 +423,6 @@ router.get('/wishlist', verifyLogin, async(req, res)=>{
     let userLog = req.session.user;
     let cartCount = req.session.cartCount;
     let products = await userHelpers.wishListProducts(userLog._id)
-    console.log(products);
     res.render('user/wishlist',{userHead:true, userLog, cartCount, products})
 })
 
@@ -464,14 +459,12 @@ router.post("/coupon", verifyLogin, async (req, res) => {
 router.get("/add-to-cart/:id", verifyLogin, (req, res) => {
   let userLog = req.session.user;
   cartHelpers.addToCart(req.params.id, userLog?._id).then((data) => {
-    console.log(data);
     res.json(data);
   });
 });
 
 router.get("/add-to-wishlist/:id", verifyLogin, (req, res) => {
   try {
-    console.log(req.param.id);
     let userLog = req.session.user;
     userHelpers.addToWishlist(req.params.id, userLog?._id).then((status) => {
       res.json(status);
@@ -523,9 +516,7 @@ router.post(
   (req, res) => {
     let index = parseInt(req.body.index);
     let userLog = req.session.user;
-    console.log(index);
     userHelpers.getSingleAddress(index, userLog._id).then((address) => {
-      console.log(address);
       res.json(address);
     });
   }
@@ -546,7 +537,6 @@ router.post("/checkout", verifyLogin, verifyCartCount, (req, res) => {
 });
 
 router.get("/place-order", verifyLogin, verifyCartCount, async (req, res) => {
-  console.log(req.session.couponedAmount);
   let userLog = req.session.user;
   let cartCount = req.session.cartCount;
   let total = await cartHelpers.getTotalAmount(userLog._id);
@@ -666,13 +656,12 @@ router.post("/verify-payment", verifyLogin, (req, res) => {
 });
 
 //paypal
-router.get("/success", verifyLogin, (req, res) => {
+router.get("/success",  (req, res) => {
   let amount = req.session.totalPrice;
   let orderIdPaypal = req.session.orderId;
   userHelpers.changePaymentStatus(orderIdPaypal).then(() => {
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
-    console.log(payerId);
     const execute_payment_json = {
       payer_id: payerId,
       transactions: [
