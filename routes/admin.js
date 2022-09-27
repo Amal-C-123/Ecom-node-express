@@ -87,7 +87,6 @@ router.post('/change-year',(req,res)=>{
   try{
     yearValue=req.body.year
     currentYear= yearValue
-  console.log("yearValuechange",yearValue);
   response.status=true
   res.json(response)
   }catch(error){
@@ -179,7 +178,6 @@ router.get("/product-delete/:id", verifyLogin, (req, res) => {
 router.get("/edit-product/:id", verifyLogin, async (req, res) => {
   try {
     let editProductFormData = await itemHelpers.getProductData(req.params.id);
-    console.log(editProductFormData);
     let categories = await itemHelpers.getCategories();
     res.render("admin/edit-product", {
       editProductFormData,
@@ -280,7 +278,6 @@ router.get("/add-categories", verifyLogin, (req, res) => {
 });
 
 router.post("/add-category", verifyLogin, (req, res) => {
-  console.log(req.body); 
   itemHelpers.addCategory(req.body);
   res.redirect("/admin/categories");
 });
@@ -377,7 +374,6 @@ router.get("/add-coupon", verifyLogin, (req, res) => {
 });
 
 router.post("/add-coupon", (req, res) => {
-  console.log(req.body);
   itemHelpers.addCoupon(req.body).then(() => {
     res.redirect("/admin/show-coupon");
   });

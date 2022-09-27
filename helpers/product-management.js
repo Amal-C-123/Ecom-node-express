@@ -179,7 +179,6 @@ module.exports = {
     data.sort(function (a, b) {
       return a.month - b.month;
     });
-    console.log("data llllllllllllllllllll", data);
     let linChartData = [];
     data.map((element) => {
       let a = element.sumQuantity;
@@ -206,7 +205,6 @@ module.exports = {
           },
         ])
         .toArray();
-      console.log("listedYears", listedYears);
       resolve(listedYears);
     });
   },
@@ -573,13 +571,11 @@ module.exports = {
           },
         ])
         .toArray();
-      console.log(products);
       //mapping
       products.map(async (prod) => {
         let Price = parseInt(prod.price);
         let discount = (Price * prod.Categorypercentage) / 100;
         Price = parseInt(Price - parseInt(discount));
-        console.log("Price", Price);
 
         await db
           .get()
@@ -638,7 +634,6 @@ module.exports = {
           },
         ])
         .toArray();
-      console.log(products);
       //mapping
       products.map(async (prod) => {
         let Price = parseInt(prod.price);

@@ -10,7 +10,7 @@
             <div class="card-body">
               <h4 class="mt-0 header-title mb-4">User Orders</h4>
               <div class="table-responsive">
-                <table class="table table-hover text-center">
+                <table id="user-orders" class="table table-hover text-center">
                   <thead>
                     <tr>
                       <th scope="col">Date</th>
@@ -82,8 +82,15 @@
 
 </div>
 
+
+<script type="text/javascript" language="javascript"
+    src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
 <script>
-  
+  $(document).ready(function () {
+        $.noConflict(true);
+        $('#user-orders').DataTable();
+    } );
 
 
 function changeOrderStatus(orderId,status) {

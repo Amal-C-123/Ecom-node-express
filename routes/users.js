@@ -683,7 +683,7 @@ router.get("/success", verifyLogin, (req, res) => {
           throw error;
         } else {
           console.log(JSON.stringify(payment));
-          res.redirect("/user-orders-list");
+          res.redirect("/shop");
         }
       }
     );

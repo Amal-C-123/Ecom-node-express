@@ -265,7 +265,6 @@ module.exports = {
         .get()
         .collection(collection.COUPON_COLLECTION)
         .findOne({ couponname: body.coupon });
-      console.log("couponcode", couponcode);
       if (couponcode) {
         let user = await db
           .get()
@@ -326,7 +325,6 @@ module.exports = {
                 },
               ])
               .toArray();
-            console.log(total);
             let total1 = total[0].total;
 
             //temp
