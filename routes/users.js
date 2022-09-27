@@ -656,7 +656,7 @@ router.post("/verify-payment", verifyLogin, (req, res) => {
 });
 
 //paypal
-router.get("/success",  (req, res) => {
+router.get("/success", verifyLogin, (req, res) => {
   let amount = req.session.totalPrice;
   let orderIdPaypal = req.session.orderId;
   userHelpers.changePaymentStatus(orderIdPaypal).then(() => {
@@ -693,7 +693,6 @@ router.get("/success",  (req, res) => {
 
 router.get('/clear-cart', verifyLogin, ((req, res)=>{
   userHelpers.clearCart(req.session.user._id).then(()=>{
-
     res.json({cleared:true})
   })
 }))
