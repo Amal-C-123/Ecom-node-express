@@ -329,7 +329,7 @@ router.get("/view-product/:id", async function (req, res) {
 
 router.get("/user-orders-list", verifyLogin, async (req, res) => {
   let userLog = req.session.user;
-  let cartCount = req.session.cartCount;
+  let cartCount =  req.session.cartCount;
   let orders = await userHelpers.getUserOrders(userLog._id);
   res.render("user/user-orders", {
     userLog,
