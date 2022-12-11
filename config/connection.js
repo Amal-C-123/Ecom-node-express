@@ -1,19 +1,18 @@
-var MongoClient=require('mongodb').MongoClient
-const state={
-    db:null
-}
-module.exports.connect=function(done){
-    // const url='mongodb://localhost:27017'
-    const url='mongodb+srv://cozmoAdmin:cozmo%21%40%23Admin123@cluster0.si0dcbo.mongodb.net/?retryWrites=true&w=majority'
-    const dbname='shopping'
-    MongoClient.connect(url,(err,data)=>{
-         if(err) return done(err)
-         state.db=data.db(dbname)
-         done()
-    })
+var MongoClient = require("mongodb").MongoClient;
+const state = {
+  db: null,
+};
+module.exports.connect = function (done) {
+  // const url='mongodb://localhost:27017'
+  const url = process.env.MONGO_URI;
+  const dbname = process.env.DB_NAME;
+  MongoClient.connect(url, (err, data) => {
+    if (err) return done(err);
+    state.db = data.db(dbname);
+    done();
+  });
+};
 
-}
-
-module.exports.get=function(){
-    return state.db
-}
+module.exports.get = function () {
+  return state.db;
+};
